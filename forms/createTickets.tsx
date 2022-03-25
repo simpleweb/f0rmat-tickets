@@ -62,7 +62,7 @@ export default function CreateTicketsForm({
               <TextArea
                 name="address"
                 label="Venue Address"
-                placeholder="A follow along painting session with Bob Ross..."
+                placeholder="1 Bob street"
                 error={errors.title?.message}
               />
             </Field>
