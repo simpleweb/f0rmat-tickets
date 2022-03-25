@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from "react-hook-form";
 
-interface InputProps extends Partial<HTMLInputElement> {
+interface LineInputProps extends Partial<HTMLInputElement> {
   name: string;
   type?: string;
   placeholder?: string;
@@ -10,7 +10,7 @@ interface InputProps extends Partial<HTMLInputElement> {
   error?: string;
 }
 
-export function Input({
+export function LineInput({
   name,
   type = "text",
   placeholder,
@@ -19,7 +19,7 @@ export function Input({
   trailing,
   error,
   ...rest
-}: InputProps) {
+}: LineInputProps) {
   return (
     <div className="w-full">
       {label}
@@ -37,7 +37,7 @@ export function Input({
   );
 }
 
-interface ControllerInputProps extends InputProps {
+interface ControllerInputProps extends LineInputProps {
   name: string;
   defaultValue?: any;
 }
@@ -54,7 +54,7 @@ export default function ControlledInput({
       control={control}
       defaultValue={defaultValue}
       name={name}
-      render={({ field }) => <Input {...field} {...rest} />}
+      render={({ field }) => <LineInput {...field} {...rest} />}
     />
   );
 }

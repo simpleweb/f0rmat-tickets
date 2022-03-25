@@ -12,17 +12,7 @@ export default function CreateTicketsForm({
   onCreateTickets,
   requiredFilesAdded = false,
 }: CreateTicketsFormProps) {
-  const form = useForm<TicketData>({
-    defaultValues: {
-      //Title: "Painting with Bob Ross",
-      //   track_name: "Builder",
-      //   track_description: "Can you fix it?",
-      //   symbol: "BOB",
-      //   salePrice: 0.002,
-      //   quantity: 123,
-      //   royalitiesPercentage: 100
-    },
-  });
+  const form = useForm<TicketData>();
   const {
     reset,
     formState: { errors },

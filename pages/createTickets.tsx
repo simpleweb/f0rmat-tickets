@@ -12,10 +12,8 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
   const [isLoading, setLoading] = useState<boolean>(false);
   const { image, setImage } = useFileDataStore();
 
-  async function handleCreateContract(data: TicketData) {
-    console.log(data);
-    //setLoading(true);
-  }
+  async function handleCreateContract(data: TicketData) {} //TODO: deploy event contract here.
+
   function handleFileUpload(e, setter) {
     const files = e.target.files;
     if (files[0]) {

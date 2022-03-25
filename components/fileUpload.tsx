@@ -22,7 +22,7 @@ export default function FileUpload({
       <input
         id={name}
         className="hidden"
-        name="file-upload"
+        name={name}
         type="file"
         onChange={onFileUpload}
         accept={accept}

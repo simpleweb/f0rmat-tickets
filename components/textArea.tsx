@@ -9,7 +9,7 @@ interface TextAreaProps {
   error?: string;
 }
 
-export function Input({
+export function TextArea({
   name,
   placeholder,
   label,
@@ -51,7 +51,7 @@ export default function ControlledInput({
       control={control}
       defaultValue={defaultValue}
       name={name}
-      render={({ field }) => <Input {...field} {...rest} />}
+      render={({ field }) => <TextArea {...field} {...rest} />}
     />
   );
 }
