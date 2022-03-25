@@ -23,6 +23,7 @@ export function TextArea({
       {label}
       <div>
         <textarea
+          className="block w-full resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           name={name}
           id={name}
           rows={rows}
