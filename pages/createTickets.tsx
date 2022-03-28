@@ -29,6 +29,7 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
       venue,
       category,
       genre,
+      blockChainId,
       stakeholders,
       stake,
     } = data;
@@ -60,7 +61,7 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
             [100],
             price ? ethers.utils.parseEther(price.toString()) : 0,
             title,
-            "WLTCKT",
+            blockChainId,
             quantity,
             0,
             ipfsData.url

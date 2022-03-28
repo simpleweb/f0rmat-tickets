@@ -26,6 +26,7 @@ export default function CreateTicketsForm({
       venue: "Bobs Gaff",
       category: "Talk",
       genre: "Instructional Painting",
+      blockChainId: "BBRS",
       stakeholders: ["0x19EBCB3E13501B8850f3A5f9904B6A6008Bd75E2"],
       stake: ["100"],
     },
@@ -109,55 +110,68 @@ export default function CreateTicketsForm({
                 </Field>
               </div>
             </div>
-            <div className="flex gap-2">
-              <div className="w-1/3">
-                <Field helpText="Add the date of the event.">
+            <Field helpText="Add the date and time of the event.">
+              <div className="flex gap-2">
+                <div className="w-1/3">
                   <Input
                     type="date"
                     name="eventDate"
-                    label="Date of the event"
+                    label="Event Date"
                     error={errors.title?.message}
                   />
-                </Field>
-              </div>
-              <div className="w-1/3">
-                <Field helpText="Add the start time of the event.">
+                </div>
+                <div className="w-1/3">
                   <Input
                     type="time"
                     name="eventStartTime"
                     label="Start time"
                     error={errors.title?.message}
                   />
-                </Field>
-              </div>
-              <div className="w-1/3">
-                <Field helpText="Add the end time of the event.">
+                </div>
+                <div className="w-1/3">
                   <Input
                     type="time"
                     name="eventEndTime"
                     label="End time"
                     error={errors.title?.message}
                   />
-                </Field>
+                </div>
               </div>
-            </div>
+            </Field>
             <div>
-              <Field helpText="Add a title for the event.">
-                <Input
-                  name="category"
-                  label="Category"
-                  placeholder="Talk"
-                  error={errors.title?.message}
-                />
-              </Field>
-              <Field helpText="Add a venue name for the event.">
-                <Input
-                  name="genre"
-                  label="Genre"
-                  placeholder="Instructional Painting"
-                  error={errors.title?.message}
-                />
-              </Field>
+              <div className="flex gap-3">
+                <div className="w-1/3">
+                  <Field helpText="e.g gig, talk, festival, clubnight, arts">
+                    <Input
+                      name="category"
+                      label="Category"
+                      placeholder="Talk"
+                      error={errors.title?.message}
+                    />
+                  </Field>
+                </div>
+                <div className="w-1/3">
+                  <Field helpText="e.g rock, history, painting, cinema">
+                    <Input
+                      name="genre"
+                      label="Genre"
+                      placeholder="Instructional"
+                      error={errors.title?.message}
+                    />
+                  </Field>
+                </div>
+                <div className="w-1/3">
+                  <Field helpText="Add a 4 character ID for the event.">
+                    <Input
+                      name="blockChainId"
+                      label="Identifier"
+                      placeholder="EVNT"
+                      error={errors.title?.message}
+                      maxLength={4}
+                    />
+                  </Field>
+                </div>
+              </div>
             </div>
             <div className="flex gap-2">
               <div className="w-4/5">

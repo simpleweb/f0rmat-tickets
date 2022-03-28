@@ -31,8 +31,7 @@ export function createMetadata(
     date,
     category,
     genre,
-    factory_id:
-      "D121BCB4B98679EAA60430A97960AC6290FD90DBEF409BA46146DCE2105CD81E", //SHA256 hash of 'ticket-factory' not sure what andy used to make his
+    factory_id: "16247fb7-1a2c-4899-a581-c46b319ef600",
     image: new File([image], image.name, {
       type: image.type,
     }),
