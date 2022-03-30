@@ -27,4 +27,23 @@ function callContract({ name, provider, cb }: CallContractProps) {
   return cb(nftContract);
 }
 
-export { callContract };
+function createContract({ name, provider, cb }: CallContractProps) {
+  if (!name || !provider || !cb) {
+    throw Error("Name, provider or callback is null.");
+  }
+
+  const contract = contracts[name];
+
+  if (!contract) throw Error("Contract address and abi are invalid.");
+
+  const { abi, bytecode } = contract;
+
+  const web3Provider = new ethers.providers.Web3Provider(provider);
+  const signer = web3Provider.getSigner();
+
+  const factory = new ethers.ContractFactory(abi, bytecode, signer);
+
+  return cb(factory);
+}
+
+export { callContract, createContract };
