@@ -16,7 +16,6 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
 
   async function handleCreateContract(data: TicketData) {
     setLoading(true);
-    console.log(data);
     const {
       address,
       description,
@@ -31,7 +30,6 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
       genre,
       blockChainId,
       stakeholders,
-      stake,
     } = data;
 
     const metadata = createMetadata(
@@ -45,20 +43,21 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
       image,
       category,
       genre
-      // stakeholders,
-      // stake
     );
 
     const ipfsData = await uploadToIPFS(metadata);
-    console.log(ipfsData.data);
+
+    const payees = stakeholders.map((stakeholder) => stakeholder.address);
+    const shares = stakeholders.map((stakeholder) => stakeholder.stake);
+
     createContract({
       name: "factory",
       provider: wallet?.provider,
       cb: async (factory) => {
         try {
           const contract = await factory.deploy(
-            [wallet.accounts[0].address],
-            [100],
+            payees,
+            shares,
             price ? ethers.utils.parseEther(price.toString()) : 0,
             title,
             blockChainId,
@@ -87,41 +86,32 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
   return (
     <div>
       {wallet?.provider && (
-        <div className="flex gap-2">
-          <div>
-            <CreateTicketsForm
-              onCreateTickets={(data) => handleCreateContract(data)}
-              isLoading={isLoading}
-              requiredFilesAdded={true}
-            />
-          </div>
-          <div className="col-span-1  w-2/5">
-            {image && (
-              <div>
-                <div className="flex flex-col items-center justify-center">
-                  {image ? (
-                    <img
-                      className="w-full rounded-md"
-                      src={URL.createObjectURL(image)}
-                    />
-                  ) : (
-                    <FileUpload
-                      name="image"
-                      onFileUpload={(e) => handleFileUpload(e, setImage)}
-                      label="Marketing Image"
-                      text="Upload an image"
-                      accept=".png, .jpeg, .jpg"
-                    />
-                  )}
-                </div>
+        <div className="flex grid gap-2 lg:grid-cols-3">
+          <div className="lg:col-span-1 lg:col-start-3">
+            <div>
+              <div className="flex flex-col items-center justify-center">
+                {image && (
+                  <img
+                    className="w-full rounded-md"
+                    src={URL.createObjectURL(image)}
+                  />
+                )}
               </div>
-            )}
+            </div>
             <FileUpload
               name="image"
               onFileUpload={(e) => handleFileUpload(e, setImage)}
               label="Marketing Image"
               text="Upload an image"
               accept=".png, .jpeg, .jpg"
+            />
+          </div>
+          <div className="sm:order-2 lg:col-span-2 lg:col-start-1 lg:row-start-1">
+            <CreateTicketsForm
+              onCreateTickets={(data) => handleCreateContract(data)}
+              isLoading={isLoading}
+              requiredFilesAdded={true}
+              wallet={wallet}
             />
           </div>
         </div>

@@ -4,5 +4,6 @@ import Field from "./field";
 import Input from "./lineInput";
 import TextArea from "./textArea";
 import FileUpload from "./fileUpload";
+import Select from "./select";
 
-export { Button, Header, Field, Input, TextArea, FileUpload };
+export { Button, Header, Field, Input, TextArea, FileUpload, Select };
