@@ -16,7 +16,6 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
 
   async function handleCreateContract(data: TicketData) {
     setLoading(true);
-    console.log(data);
     const {
       address,
       description,
@@ -33,9 +32,6 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
       stakeholders,
     } = data;
 
-    const payees = stakeholders.map((stakeholder) => stakeholder.address);
-    const shares = stakeholders.map((stakeholder) => stakeholder.stake);
-
     const metadata = createMetadata(
       title,
       venue,
@@ -50,7 +46,10 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
     );
 
     const ipfsData = await uploadToIPFS(metadata);
-    console.log(ipfsData.data);
+
+    const payees = stakeholders.map((stakeholder) => stakeholder.address);
+    const shares = stakeholders.map((stakeholder) => stakeholder.stake);
+
     createContract({
       name: "factory",
       provider: wallet?.provider,
@@ -112,6 +111,7 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
               onCreateTickets={(data) => handleCreateContract(data)}
               isLoading={isLoading}
               requiredFilesAdded={true}
+              wallet={wallet}
             />
           </div>
         </div>

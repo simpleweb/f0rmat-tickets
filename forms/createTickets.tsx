@@ -1,17 +1,21 @@
 import { FormProvider, useForm, useFieldArray } from "react-hook-form";
 import { Field, Input, TextArea, Button, Select } from "../components";
 import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/outline";
+import { WalletState } from "@web3-onboard/core";
+import { categories, genres } from "../constants";
 
 interface CreateTicketsFormProps {
   isLoading: boolean;
   onCreateTickets: (data: TicketData) => void;
   requiredFilesAdded: boolean;
+  wallet: WalletState;
 }
 
 export default function CreateTicketsForm({
   isLoading,
   onCreateTickets,
   requiredFilesAdded = false,
+  wallet,
 }: CreateTicketsFormProps) {
   const form = useForm<TicketData>({
     // @dev Used for testing
@@ -182,17 +186,11 @@ export default function CreateTicketsForm({
                               errors["categorys"]?.[index]?.trait_type?.message
                             }
                           >
-                            <option disabled selected value="">
-                              Select Attribute Type
-                            </option>
-                            <option value="gig">Gig</option>
-                            <option value="festival">Festival</option>
-                            <option value="exhibition">Exhibition</option>
-                            <option value="talk">Talk</option>
-                            <option value="clubnight">Clubnight</option>
-                            <option value="instructional">Instructional</option>
-                            <option value="cinema">Cinema</option>
-                            <option value="theatre">Theatre</option>
+                            {categories.map((category) => (
+                              <option value={category.value}>
+                                {category.label}
+                              </option>
+                            ))}
                           </Select>
                         </Field>
                         <div className="grid grid-cols-2 gap-2">
@@ -228,15 +226,9 @@ export default function CreateTicketsForm({
                               errors["genres"]?.[index]?.trait_type?.message
                             }
                           >
-                            <option disabled selected value="">
-                              Select Attribute Type
-                            </option>
-                            <option value="rock">Rock</option>
-                            <option value="history">History</option>
-                            <option value="abstract">Abstract</option>
-                            <option value="comedy">Comedy</option>
-                            <option value="acoustic">Acoustic</option>
-                            <option value="other">Other</option>
+                            {genres.map((genre) => (
+                              <option value={genre.value}>{genre.label}</option>
+                            ))}
                           </Select>
                         </Field>
                         <div className="grid grid-cols-2 gap-2">
@@ -272,7 +264,7 @@ export default function CreateTicketsForm({
                               <Input
                                 name={`stakeholders.${index}.address`}
                                 label="Add Stakeholders"
-                                placeholder="0x19EBCB3E13501B8850f3A5f9904B6A6008Bd75E2"
+                                placeholder={wallet?.accounts[0].address}
                                 error={
                                   errors["stakeholders"]?.[index]?.value
                                     ?.message
@@ -335,7 +327,10 @@ export default function CreateTicketsForm({
         </div>
         <br></br>
         <Field>
-          <Button isLoading={isLoading} disabled={!requiredFilesAdded}>
+          <Button
+            isLoading={isLoading}
+            disabled={!requiredFilesAdded || isLoading}
+          >
             Create Tickets
           </Button>
         </Field>
