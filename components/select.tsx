@@ -1,48 +1,42 @@
 import { Controller, useFormContext } from "react-hook-form";
 
-interface LineInputProps extends Partial<HTMLInputElement> {
+interface SelectProps extends Partial<HTMLSelectElement> {
   name: string;
-  type?: string;
   placeholder?: string;
   label?: string;
   helpText?: string;
   trailing?: any;
   error?: string;
 }
-
-export function LineInput({
+export function Select({
   name,
-  type = "text",
+  children,
   placeholder,
   label,
   helpText,
   trailing,
   error,
   ...rest
-}: LineInputProps) {
+}: SelectProps) {
   return (
     <div className="w-full">
       {label}
       <div className="flex">
-        <input
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          placeholder={placeholder}
-          type={type}
+        <select
+          className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           name={name}
           id={name}
+          placeholder={placeholder}
           {...rest}
-        />
-        {trailing && (
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-sm font-semibold text-black">
-            {trailing}
-          </div>
-        )}
+        >
+          {children}
+        </select>
       </div>
     </div>
   );
 }
 
-interface ControllerInputProps extends LineInputProps {
+interface ControllerInputProps extends SelectProps {
   name: string;
   defaultValue?: any;
 }
@@ -59,7 +53,7 @@ export default function ControlledInput({
       control={control}
       defaultValue={defaultValue}
       name={name}
-      render={({ field }) => <LineInput {...field} {...rest} />}
+      render={({ field }) => <Select {...field} {...rest} />}
     />
   );
 }
