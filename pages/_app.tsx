@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Header } from "../components";
 import { initOnboard } from "../services";
 import "../styles/globals.css";
+import { Toaster } from "react-hot-toast";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [{ wallet }, connect, disconnect] = useConnectWallet();
@@ -42,7 +43,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <div className="m-4">
-      <Header wallet={wallet} disconnect={disconnect} connect={connect} />
+      <Toaster />
+      <Header disconnect={disconnect} connect={connect} />
       <Component wallet={wallet} {...pageProps} />
     </div>
   );

@@ -4,7 +4,15 @@ import { useState } from "react";
 import { FileUpload } from "../components";
 import { useFileDataStore } from "../stores";
 import { ethers } from "ethers";
-import { createMetadata, uploadToIPFS, createContract } from "../helpers";
+import {
+  createMetadata,
+  uploadToIPFS,
+  createContract,
+  errorNotification,
+  loadingNotification,
+  dismissNotification,
+} from "../helpers";
+import toast from "react-hot-toast";
 
 interface CreateTicketsProps {
   wallet: WalletState;
@@ -13,67 +21,95 @@ interface CreateTicketsProps {
 export default function CreateTickets({ wallet }: CreateTicketsProps) {
   const [isLoading, setLoading] = useState<boolean>(false);
   const { image, setImage } = useFileDataStore();
-
   async function handleCreateContract(data: TicketData) {
-    setLoading(true);
-    const {
-      address,
-      description,
-      eventDate,
-      eventEndTime,
-      eventStartTime,
-      price,
-      quantity,
-      title,
-      venue,
-      category,
-      genre,
-      blockChainId,
-      stakeholders,
-    } = data;
+    if (image) {
+      setLoading(true);
+      const {
+        address,
+        description,
+        eventDate,
+        eventEndTime,
+        eventStartTime,
+        price,
+        quantity,
+        title,
+        venue,
+        category,
+        genre,
+        blockChainId,
+        stakeholders,
+      } = data;
 
-    const metadata = createMetadata(
-      title,
-      venue,
-      description,
-      address,
-      eventStartTime,
-      eventEndTime,
-      eventDate,
-      image,
-      category,
-      genre
-    );
+      const metadata = createMetadata(
+        title,
+        venue,
+        description,
+        address,
+        eventStartTime,
+        eventEndTime,
+        eventDate,
+        image,
+        category,
+        genre
+      );
 
-    const ipfsData = await uploadToIPFS(metadata);
+      const ipfsData = await uploadToIPFS(metadata);
 
-    const payees = stakeholders.map((stakeholder) => stakeholder.address);
-    const shares = stakeholders.map((stakeholder) => stakeholder.stake);
+      const payees = stakeholders.map((stakeholder) => stakeholder.address) || [
+        "",
+      ];
+      const shares = stakeholders.map((stakeholder) => stakeholder.stake) || [
+        "",
+      ];
+      const waitingToConfirm = loadingNotification("Waiting for confirmation");
 
-    createContract({
-      name: "factory",
-      provider: wallet?.provider,
-      cb: async (factory) => {
-        try {
-          const contract = await factory.deploy(
-            payees,
-            shares,
-            price ? ethers.utils.parseEther(price.toString()) : 0,
-            title,
-            blockChainId,
-            quantity,
-            0,
-            ipfsData.url
-          );
+      createContract({
+        name: "factory",
+        provider: wallet?.provider,
+        cb: async (factory) => {
+          try {
+            const contract = await factory.deploy(
+              payees,
+              shares,
+              price ? ethers.utils.parseEther(price.toString()) : 0,
+              title,
+              blockChainId,
+              quantity,
+              0,
+              ipfsData.url
+            );
+            dismissNotification(waitingToConfirm);
+            toast
+              .promise(
+                contract.deployTransaction.wait(),
 
-          await contract.deployTransaction.wait();
-
-          setLoading(false);
-        } catch (e) {
-          setLoading(false);
-        }
-      },
-    });
+                {
+                  loading: "Creating Tickets ⛏️",
+                  success: "success",
+                  error: "failed",
+                },
+                {
+                  position: "bottom-center",
+                  style: {
+                    background: "#94a4bb",
+                    padding: "16px",
+                  },
+                }
+              )
+              .then(() => {
+                setLoading(false);
+              });
+          } catch (e) {
+            dismissNotification(waitingToConfirm);
+            errorNotification(e.toString());
+            setLoading(false);
+          }
+        },
+      });
+    } else {
+      dismissNotification(waitingToConfirm);
+      errorNotification("Add a marketing image.");
+    }
   }
 
   function handleFileUpload(e, setter) {
