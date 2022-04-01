@@ -10,7 +10,7 @@ export default function Field({ children, error, helpText }: FieldProps) {
   return (
     <div>
       {children}
-      <p classNames={classNames(error && "bg-red-500  text-white shadow")}>
+      <p classNames={classNames({ "bg-red-500  text-white shadow": error })}>
         {error ?? helpText}
       </p>
     </div>
