@@ -31,7 +31,7 @@ export default function CreateTicketsForm({
       .required("Stake is required")
       .typeError("Stake must be a number"),
   };
-  
+
   const TicketSchema = yup.object().shape({
     title: yup.string().required(),
     venue: yup.string().required(),
@@ -91,6 +91,13 @@ export default function CreateTicketsForm({
     name: "genres",
   });
 
+  if (genreFields.length == 0) {
+    appendGenre("");
+  }
+  if (categoryFields.length == 0) {
+    appendCategory("");
+  }
+
   const {
     reset,
     formState: { errors },
@@ -109,8 +116,8 @@ export default function CreateTicketsForm({
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onCreateTickets)}>
-        <div className="rounded-md bg-slate-400 p-5">
-          <div className="grid flex-wrap gap-2">
+        <div className="border-t-2 border-b-2 border-slate-400 p-5">
+          <div className="flex-wrap gap-2 lg:grid lg:grid-cols-2">
             <Field
               helpText="Add a title for the event."
               error={errors.title?.message}
@@ -167,6 +174,7 @@ export default function CreateTicketsForm({
                   <Input
                     type="number"
                     min="0"
+                    step="0.01"
                     name="price"
                     label="Ticket Price"
                     placeholder="0.75"
@@ -203,6 +211,7 @@ export default function CreateTicketsForm({
                     name="eventDate"
                     min={dayjs().format("YYYY-MM-DD")}
                     label="Event Date"
+                    onKeyDown={(e) => e.preventDefault()}
                   />
                 </div>
                 <div className="w-1/3">
@@ -259,123 +268,106 @@ export default function CreateTicketsForm({
                 )}
               </div>
               <br></br>
-              {genreFields.length != 0 ? (
-                <div className="gap-3">
-                  {genreFields.map((item, index) => {
-                    return (
-                      <div className="col-span-2 flex gap-2">
-                        <Field>
-                          <Select
-                            name={`genres.${index}`}
-                            label="Genre"
-                            placeholder="Talk"
-                          >
-                            <option>Select Genre</option>
-                            {genres.map((genre) => (
-                              <option value={genre.value}>{genre.label}</option>
-                            ))}
-                          </Select>
-                        </Field>
-                        <div className="grid grid-cols-2 gap-2">
-                          <div
-                            className="span-col-1 pt-8"
-                            onClick={() => removeGenre(index)}
-                          >
-                            <MinusCircleIcon className="h-6 w-6" />
-                          </div>
-                          <div
-                            className="col-start-2 pt-8"
-                            onClick={() => appendGenre(index)}
-                          >
-                            <PlusCircleIcon className="h-6 w-6" />
-                          </div>
+
+              <div className="gap-3">
+                {genreFields.map((item, index) => {
+                  return (
+                    <div className="col-span-2 flex gap-2">
+                      <Field>
+                        <Select
+                          name={`genres.${index}`}
+                          label="Genre"
+                          placeholder="Talk"
+                        >
+                          <option>Select Genre</option>
+                          {genres.map((genre) => (
+                            <option value={genre.value}>{genre.label}</option>
+                          ))}
+                        </Select>
+                      </Field>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div
+                          className="span-col-1 pt-8"
+                          onClick={() => removeGenre(index)}
+                        >
+                          <MinusCircleIcon className="h-6 w-6" />
+                        </div>
+                        <div
+                          className="col-start-2 pt-8"
+                          onClick={() => appendGenre(index)}
+                        >
+                          <PlusCircleIcon className="h-6 w-6" />
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <Button onClick={() => appendGenre(0)}>Add Genres</Button>
-              )}
+                    </div>
+                  );
+                })}
+              </div>
               <br></br>
+            </div>
+            <div>
               <div>
-                {stakeholderFields.length != 0 ? (
-                  <div>
-                    {stakeholderFields.map((item, index) => {
-                      return (
-                        <div key={index} className="flex gap-2">
-                          <div className="w-4/6">
+                {stakeholderFields.map((item, index) => {
+                  return (
+                    <div key={index} className="flex gap-2">
+                      <div className="w-4/6">
+                        <Field
+                          error={
+                            errors["stakeholders"]?.[index]?.address?.message
+                          }
+                          helpText="Add an ethereum address."
+                        >
+                          <Input
+                            name={`stakeholders.${index}.address`}
+                            label="Add Stakeholders"
+                            placeholder={wallet?.accounts[0].address}
+                          />
+                        </Field>
+                      </div>
+                      <div className="w-2/6">
+                        <div className="flex gap-2">
+                          <div className="w-4/5">
                             <Field
+                              helpText="Add the stake percentage."
                               error={
-                                errors["stakeholders"]?.[index]?.address
-                                  ?.message
+                                errors["stakeholders"]?.[index]?.stake
+                                  ?.message || errors?.stakeholders?.message
                               }
-                              helpText="Add an ethereum address."
                             >
                               <Input
-                                name={`stakeholders.${index}.address`}
-                                label="Add Stakeholders"
-                                placeholder={wallet?.accounts[0].address}
+                                type="number"
+                                min="1"
+                                name={`stakeholders.${index}.stake`}
+                                label="Stake"
+                                placeholder="100"
                               />
                             </Field>
                           </div>
-                          <div className="w-2/6">
-                            <div className="flex gap-2">
-                              <div className="w-4/5">
-                                <Field
-                                  helpText="Add the stake percentage."
-                                  error={
-                                    errors["stakeholders"]?.[index]?.stake
-                                      ?.message || errors?.stakeholders?.message
-                                  }
-                                >
-                                  <Input
-                                    type="number"
-                                    min="1"
-                                    name={`stakeholders.${index}.stake`}
-                                    label="Stake"
-                                    placeholder="100"
-                                  />
-                                </Field>
-                              </div>
-                              <div className="flex w-1/5 gap-2 ">
-                                <div
-                                  className="w-1/2 pt-8"
-                                  onClick={() => removeStakeholder(index)}
-                                >
-                                  <MinusCircleIcon className="h-6 w-6" />
-                                </div>
-                                <div
-                                  className="w-1/2 pt-8"
-                                  onClick={() => appendStakeholder(index)}
-                                >
-                                  <PlusCircleIcon className="h-6 w-6" />
-                                </div>
-                              </div>
+                          <div className="flex w-1/5 gap-2 ">
+                            <div
+                              className="w-1/2 pt-8"
+                              onClick={() => removeStakeholder(index)}
+                            >
+                              <MinusCircleIcon className="h-6 w-6" />
+                            </div>
+                            <div
+                              className="w-1/2 pt-8"
+                              onClick={() => appendStakeholder(index)}
+                            >
+                              <PlusCircleIcon className="h-6 w-6" />
                             </div>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() =>
-                      appendStakeholder({
-                        address: "",
-                        stake: undefined,
-                      })
-                    }
-                  >
-                    Add Stakeholders
-                  </Button>
-                )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
         <br></br>
-        <Field>
+        <Field className="border-b-2 border-slate-400">
           <Button
             isLoading={isLoading}
             disabled={!requiredFilesAdded || isLoading}
@@ -384,6 +376,7 @@ export default function CreateTicketsForm({
           </Button>
         </Field>
       </form>
+      <br></br>
     </FormProvider>
   );
 }

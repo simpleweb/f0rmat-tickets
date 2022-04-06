@@ -12,8 +12,8 @@ import { BLOCK_EXPLORER_URL, switchChain } from "../helpers";
 
 export default function Header() {
   const { t } = useTranslation("common");
-  const [{}, setChain] = useSetChain();
-  const CHAIN_ID = process.env.NEXT_CHAIN_ID;
+  const [{ chains, connectedChain }, setChain] = useSetChain();
+  const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID;
   const [{ wallet }, connect, disconnect] = useConnectWallet();
 
   async function handleConnect() {
@@ -24,7 +24,7 @@ export default function Header() {
     if (wallet && CHAIN_ID) {
       switchChain(setChain, CHAIN_ID);
     }
-  }, [wallet]);
+  }, [wallet, connectedChain]);
 
   async function handleDisconnect() {
     if (wallet) {
@@ -33,7 +33,7 @@ export default function Header() {
   }
 
   return (
-    <header className="w-full">
+    <header className="w-full p-3">
       <div className="flex items-center justify-end">
         {wallet?.accounts[0].address ? (
           <>

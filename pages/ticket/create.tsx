@@ -1,8 +1,7 @@
-import { WalletState } from "@web3-onboard/core";
-import { CreateTicketsForm } from "../forms";
+import { CreateTicketsForm } from "../../forms";
 import { useState } from "react";
-import { FileUpload } from "../components";
-import { useFileDataStore } from "../stores";
+import { FileUpload } from "../../components";
+import { useFileDataStore } from "../../stores";
 import { ethers } from "ethers";
 import {
   createMetadata,
@@ -11,16 +10,20 @@ import {
   errorNotification,
   loadingNotification,
   dismissNotification,
-} from "../helpers";
+} from "../../helpers";
 import toast from "react-hot-toast";
+import Router from "next/router";
+import { useConnectWallet } from "@web3-onboard/react";
 
-interface CreateTicketsProps {
-  wallet: WalletState;
-}
-
-export default function CreateTickets({ wallet }: CreateTicketsProps) {
+export default function CreateTickets() {
   const [isLoading, setLoading] = useState<boolean>(false);
   const { image, setImage } = useFileDataStore();
+  const [{ wallet }] = useConnectWallet();
+
+  function onCreation(contractAddress: string) {
+    if (contractAddress) Router.push(`/ticket/${contractAddress}`);
+  }
+
   async function handleCreateContract(data: TicketData) {
     if (image) {
       setLoading(true);
@@ -34,8 +37,8 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
         quantity,
         title,
         venue,
-        category,
-        genre,
+        categories,
+        genres,
         blockChainId,
         stakeholders,
       } = data;
@@ -49,11 +52,17 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
         eventEndTime,
         eventDate,
         image,
-        category,
-        genre
+        categories,
+        genres
       );
 
-      const ipfsData = await uploadToIPFS(metadata);
+      let ipfsData;
+      try {
+        ipfsData = await uploadToIPFS(metadata);
+      } catch (e) {
+        console.log("IPFS UPLOAD FAILED: ", e);
+        return;
+      }
 
       const payees = stakeholders.map((stakeholder) => stakeholder.address) || [
         "",
@@ -63,51 +72,58 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
       ];
       const waitingToConfirm = loadingNotification("Waiting for confirmation");
 
-      createContract({
-        name: "factory",
-        provider: wallet?.provider,
-        cb: async (factory) => {
-          try {
-            const contract = await factory.deploy(
-              payees,
-              shares,
-              price ? ethers.utils.parseEther(price.toString()) : 0,
-              title,
-              blockChainId,
-              quantity,
-              0,
-              ipfsData.url
-            );
-            dismissNotification(waitingToConfirm);
-            toast
-              .promise(
-                contract.deployTransaction.wait(),
-
-                {
-                  loading: "Creating Tickets ⛏️",
-                  success: "success",
-                  error: "failed",
-                },
-                {
-                  position: "bottom-center",
-                  style: {
-                    background: "#94a4bb",
-                    padding: "16px",
+      try {
+        createContract({
+          name: "factory",
+          provider: wallet?.provider,
+          cb: async (factory) => {
+            try {
+              const contract = await factory.deploy(
+                payees,
+                shares,
+                price ? ethers.utils.parseEther(price.toString()) : 0,
+                title,
+                blockChainId,
+                quantity,
+                0,
+                ipfsData.url
+              );
+              dismissNotification(waitingToConfirm);
+              toast
+                .promise(
+                  contract.deployTransaction.wait(),
+                  {
+                    loading: "Creating Tickets ⛏️",
+                    success: "success",
+                    error: "failed",
                   },
-                }
-              )
-              .then(() => {
-                setLoading(false);
-              });
-          } catch (e) {
-            dismissNotification(waitingToConfirm);
-            errorNotification(e.toString());
-            setLoading(false);
-          }
-        },
-      });
-    } else {
-      dismissNotification(waitingToConfirm);
+                  {
+                    position: "bottom-center",
+                    style: {
+                      background: "#94a4bb",
+                      padding: "16px",
+                    },
+                  }
+                )
+                .then((data: any) => {
+                  setLoading(false);
+                  onCreation(data.contractAddress);
+                })
+                .catch((e) => {
+                  setLoading(false);
+                  console.log(e);
+                });
+            } catch (e) {
+              dismissNotification(waitingToConfirm);
+              errorNotification(e.toString());
+              setLoading(false);
+            }
+          },
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    } else if (!image) {
       errorNotification("Add a marketing image.");
     }
   }
@@ -120,7 +136,7 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
   }
 
   return (
-    <div>
+    <div className="p-5 lg:pr-20 lg:pl-20">
       {wallet?.provider && (
         <div className="flex grid gap-2 lg:grid-cols-3">
           <div className="lg:col-span-1 lg:col-start-3">
@@ -128,7 +144,7 @@ export default function CreateTickets({ wallet }: CreateTicketsProps) {
               <div className="flex flex-col items-center justify-center">
                 {image && (
                   <img
-                    className="w-full rounded-md"
+                    className="w-1/2 rounded-md lg:w-full"
                     src={URL.createObjectURL(image)}
                   />
                 )}

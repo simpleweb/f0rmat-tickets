@@ -18,8 +18,8 @@ export function createMetadata(
   end: string,
   date: string,
   image: File,
-  category: string,
-  genre: string
+  categories: string[],
+  genres: string[]
 ) {
   const data = {
     name,
@@ -29,9 +29,10 @@ export function createMetadata(
     start,
     end,
     date,
-    category,
-    genre,
-    factory_id: "16247fb7-1a2c-4899-a581-c46b319ef600",
+    release_type: "ticket",
+    categories: categories.toString(),
+    genres: genres.toString(),
+    factory_id: process.env.NEXT_PUBLIC_FACTORY_ID,
     image: new File([image], image.name, {
       type: image.type,
     }),

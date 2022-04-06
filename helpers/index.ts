@@ -7,6 +7,7 @@ import {
   loadingNotification,
   dismissNotification,
 } from "./notifications";
+import { getMetadataValue } from "./metadata";
 
 export {
   addNetwork,
@@ -21,4 +22,5 @@ export {
   errorNotification,
   loadingNotification,
   dismissNotification,
+  getMetadataValue,
 };
