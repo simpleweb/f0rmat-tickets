@@ -98,6 +98,13 @@ export default function CreateTicketsForm({
     appendCategory("");
   }
 
+  if (stakeholderFields.length == 0) {
+    appendStakeholder({
+      address: [wallet?.accounts[0].address],
+      stake: ["100"],
+    });
+  }
+
   const {
     reset,
     formState: { errors },
