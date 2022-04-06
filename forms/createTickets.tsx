@@ -353,7 +353,10 @@ export default function CreateTicketsForm({
                           <div className="flex w-1/5 gap-2 ">
                             <div
                               className="w-1/2 pt-8"
-                              onClick={() => removeStakeholder(index)}
+                              onClick={() => {
+                                if (stakeholderFields.length > 1)
+                                  removeStakeholder(index);
+                              }}
                             >
                               <MinusCircleIcon className="h-6 w-6" />
                             </div>
