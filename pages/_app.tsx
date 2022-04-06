@@ -6,6 +6,15 @@ import { Header } from "../components";
 import { initOnboard } from "../services";
 import "../styles/globals.css";
 import { Toaster } from "react-hot-toast";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [{ wallet }, connect, disconnect] = useConnectWallet();
@@ -42,10 +51,14 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [onboard, connect]);
 
   return (
-    <div className="m-4">
-      <Toaster />
-      <Header disconnect={disconnect} connect={connect} />
-      <Component wallet={wallet} {...pageProps} />
+    <div className="bg-black font-sans text-slate-100/[0.6]">
+      <QueryClientProvider client={queryClient}>
+        <div>
+          <Header disconnect={disconnect} connect={connect} />
+          <Component wallet={wallet} {...pageProps} />
+          <Toaster />
+        </div>
+      </QueryClientProvider>
     </div>
   );
 }

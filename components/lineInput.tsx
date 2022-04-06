@@ -24,7 +24,7 @@ export function LineInput({
   return (
     <div className="w-full">
       {label}
-      <div className="flex">
+      <div className="flex text-black">
         <input
           className={classNames(
             { "border-2 border-red-500": error },

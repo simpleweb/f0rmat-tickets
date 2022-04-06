@@ -21,7 +21,7 @@ export function Select({
   return (
     <div className="w-full">
       {label}
-      <div className="flex">
+      <div className="flex text-black">
         <select
           className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           name={name}
