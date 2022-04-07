@@ -37,6 +37,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     );
   }, [connectedWallets]);
 
+  //NOTE: This is causing popup spam saying connection successfull
+  //is there anyway we can hide this message but still connect on page load
   useEffect(() => {
     const previouslyConnectedWallets = JSON.parse(
       window.localStorage.getItem("connectedWallets")
@@ -51,9 +53,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [onboard, connect]);
 
   return (
-    <div className="bg-black font-sans text-slate-100/[0.6]">
+    <div className="min-w-screen h-full min-h-screen w-full bg-black font-sans text-slate-100/[0.6]">
       <QueryClientProvider client={queryClient}>
-        <div>
+        <div className="p-3 lg:pr-20 lg:pl-20">
           <Header disconnect={disconnect} connect={connect} />
           <Component wallet={wallet} {...pageProps} />
           <Toaster />

@@ -10,8 +10,8 @@ import {
   errorNotification,
   loadingNotification,
   dismissNotification,
+  transformURL,
 } from "../../helpers";
-import { transformURL } from "../../helpers/ipfs";
 import { ethers } from "ethers";
 import { useEffect } from "react";
 
@@ -111,21 +111,21 @@ export default function ticket() {
               )
               .then((data) => {
                 setButtonLoading(false);
-                console.log(data);
               })
               .catch((e) => {
                 setButtonLoading(false);
-                console.log(e);
+                errorNotification(e);
               });
           } catch (e) {
             setButtonLoading(false);
+            errorNotification(e);
             dismissNotification(waitingToConfirm);
             console.log(e);
           }
         },
       });
     } catch (e) {
-      console.log("ERROR ", e);
+      errorNotification(e);
       dismissNotification(waitingToConfirm);
       setButtonLoading(false);
     }

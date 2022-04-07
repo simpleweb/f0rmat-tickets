@@ -123,7 +123,7 @@ export default function CreateTicketsForm({
   return (
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onCreateTickets)}>
-        <div className="border-t-2 border-b-2 border-slate-400 p-5">
+        <div className="border-t-2 border-b-2 border-slate-400 p-3">
           <div className="flex-wrap gap-2 lg:grid lg:grid-cols-2">
             <Field
               helpText="Add a title for the event."

@@ -1,7 +1,7 @@
 import { callContract, createContract } from "./contract";
 import { addNetwork, BLOCK_EXPLORER_URL, NETWORK_ID } from "./network";
 import { readyToTransact, switchChain } from "./wallet";
-import { uploadToIPFS, createMetadata } from "./ipfs";
+import { uploadToIPFS, createMetadata, transformURL } from "./ipfs";
 import {
   errorNotification,
   loadingNotification,
@@ -23,4 +23,5 @@ export {
   loadingNotification,
   dismissNotification,
   getMetadataValue,
+  transformURL,
 };
