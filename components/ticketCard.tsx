@@ -11,9 +11,6 @@ export function TicketCard({ data }: TicketCardProps) {
   const start = getMetadataValue(metadata, "start");
   const venue = getMetadataValue(metadata, "venue");
   const categories = getMetadataValue(metadata, "categories");
-  console.log(categories);
-
-  console.log(data);
   const url = "/ticket/" + data.id;
   return (
     <a href={url}>
@@ -27,8 +24,8 @@ export function TicketCard({ data }: TicketCardProps) {
             />
           </div>
         </div>
-        <div>{title}</div>
-        <div>{venue}</div>
+        <div className="pt-1 text-3xl">{title}</div>
+        <div className="text-xl">{venue}</div>
         <div>{date + " @ " + start}</div>
         <div className="text-white">
           {categories ? <div>{categories}</div> : <br></br>}

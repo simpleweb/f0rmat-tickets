@@ -2,8 +2,7 @@
 import { gql, request } from "graphql-request";
 import { useQuery } from "react-query";
 
-const endpoint =
-  "https://api.thegraph.com/subgraphs/name/tinypell3ts/music-factory";
+const endpoint = process.env.NEXT_PUBLIC_GRAPH_ENDPOINT;
 
 export default function useGetTicket(address: string, refetchInterval = 0) {
   return useQuery(

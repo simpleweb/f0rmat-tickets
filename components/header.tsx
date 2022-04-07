@@ -36,27 +36,22 @@ export default function Header() {
   return (
     <header className="pb-3">
       <div className="flex justify-between">
-        {router.route == "/" ? (
-          <div>
-            <Button
-              onClick={() => {
-                router.push("/ticket/create");
-              }}
-            >
-              Create Tickets
-            </Button>
+        <div className="my-2 gap-2 border-x-2 border-slate-100/[0.6] px-2 text-xl md:flex lg:flex">
+          {router.route == "/" ? (
+            <div className=" text-xl hover:text-white">
+              <a href={"/ticket/create"}>Create Tickets </a>
+            </div>
+          ) : (
+            <div>
+              <div className="text-xl hover:text-white">
+                <a href={"/"}>View All Tickets </a>
+              </div>
+            </div>
+          )}
+          <div className=" hover:text-white">
+            <a href={"/user"}>My Tickets </a>
           </div>
-        ) : (
-          <div>
-            <Button
-              onClick={() => {
-                router.push("/");
-              }}
-            >
-              View All Tickets
-            </Button>
-          </div>
-        )}
+        </div>
         <div className="flex items-center">
           {wallet?.accounts[0].address ? (
             <>
