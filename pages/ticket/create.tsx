@@ -106,7 +106,6 @@ export default function CreateTickets() {
                   }
                 )
                 .then((data: any) => {
-                  setLoading(false);
                   onCreation(data.contractAddress);
                 })
                 .catch((e) => {
@@ -136,7 +135,7 @@ export default function CreateTickets() {
   }
 
   return (
-    <div className="p-5 lg:pr-20 lg:pl-20">
+    <div>
       {wallet?.provider && (
         <div className="flex grid gap-2 lg:grid-cols-3">
           <div className="lg:col-span-1 lg:col-start-3">

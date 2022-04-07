@@ -9,7 +9,7 @@ import useTranslation from "next-translate/useTranslation";
 import { useEffect } from "react";
 import { Button } from "../components";
 import { BLOCK_EXPLORER_URL, switchChain } from "../helpers";
-
+import { useRouter } from "next/router";
 export default function Header() {
   const { t } = useTranslation("common");
   const [{ chains, connectedChain }, setChain] = useSetChain();
@@ -31,32 +31,58 @@ export default function Header() {
       await disconnect(wallet);
     }
   }
+  const router = useRouter();
 
   return (
-    <header className="w-full p-3">
-      <div className="flex items-center justify-end">
-        {wallet?.accounts[0].address ? (
-          <>
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href={BLOCK_EXPLORER_URL(wallet?.accounts[0]?.address)}
+    <header className="pb-3">
+      <div className="flex justify-between">
+        {router.route == "/" ? (
+          <div>
+            <Button
+              onClick={() => {
+                router.push("/ticket/create");
+              }}
             >
-              <div className="mx-2 flex hover:text-indigo-800">
-                <span>
-                  {wallet?.accounts[0]?.address.slice(0, 4)}...
-                  {wallet?.accounts[0]?.address.slice(-4)}
-                </span>
-                <ExternalLinkIcon className="h-6 w-6" />
-              </div>
-            </a>
-            <Button onClick={handleDisconnect}>
-              {t("wallet.disconnect_button")}
+              Create Tickets
             </Button>
-          </>
+          </div>
         ) : (
-          <Button onClick={handleConnect}>{t("wallet.connect_button")}</Button>
+          <div>
+            <Button
+              onClick={() => {
+                router.push("/");
+              }}
+            >
+              View All Tickets
+            </Button>
+          </div>
         )}
+        <div className="flex items-center">
+          {wallet?.accounts[0].address ? (
+            <>
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={BLOCK_EXPLORER_URL(wallet?.accounts[0]?.address)}
+              >
+                <div className="mx-2 flex hover:text-indigo-800">
+                  <span>
+                    {wallet?.accounts[0]?.address.slice(0, 4)}...
+                    {wallet?.accounts[0]?.address.slice(-4)}
+                  </span>
+                  <ExternalLinkIcon className="h-6 w-6" />
+                </div>
+              </a>
+              <Button onClick={handleDisconnect}>
+                {t("wallet.disconnect_button")}
+              </Button>
+            </>
+          ) : (
+            <Button onClick={handleConnect}>
+              {t("wallet.connect_button")}
+            </Button>
+          )}
+        </div>
       </div>
     </header>
   );

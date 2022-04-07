@@ -5,5 +5,15 @@ import Input from "./lineInput";
 import TextArea from "./textArea";
 import FileUpload from "./fileUpload";
 import Select from "./select";
+import { TicketCard } from "./ticketCard";
 
-export { Button, Header, Field, Input, TextArea, FileUpload, Select };
+export {
+  Button,
+  Header,
+  Field,
+  Input,
+  TextArea,
+  FileUpload,
+  Select,
+  TicketCard,
+};

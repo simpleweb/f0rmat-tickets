@@ -7,7 +7,7 @@ const endpoint =
 
 export default function useGetTicket(address: string, refetchInterval = 0) {
   return useQuery(
-    ["release", address],
+    ["ticket", address],
     async () => {
       const { mediaItem } = await request(
         endpoint,
