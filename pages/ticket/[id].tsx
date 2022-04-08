@@ -256,32 +256,34 @@ export default function ticket() {
   }
 
   return (
-    <div className="m-10 gap-2 lg:grid-cols-2">
+    <div className="gap-2 lg:grid-cols-2">
       {data && (
         <div>
           <EventDataCard />
           <br></br>
-          <div className="flex">
-            {soldOut ? (
-              <h1 className="text-4xl">SOLD OUT</h1>
-            ) : (
-              <Button
-                onClick={purchaseTicket}
-                isLoading={isPurchaseButtonLoading}
-                disabled={noFunds || isPurchaseButtonLoading}
-              >
-                Purchase Ticket at{" "}
-                {ethers.utils.formatEther(data?.saleData.salePrice) + " "}
-                MATIC
-              </Button>
-            )}
-            <div className="ml-2">
+          <div className="flex-wrap md:flex lg:flex">
+            <div className="mb-2">
+              {soldOut ? (
+                <h1 className="mb-2 text-4xl">SOLD OUT</h1>
+              ) : (
+                <Button
+                  onClick={purchaseTicket}
+                  isLoading={isPurchaseButtonLoading}
+                  disabled={noFunds || isPurchaseButtonLoading}
+                >
+                  Purchase Ticket at{" "}
+                  {ethers.utils.formatEther(data?.saleData.salePrice) + " "}
+                  MATIC
+                </Button>
+              )}
+            </div>
+            <div className="md:ml-2 lg:ml-2">
               {isStakeholder && (
                 <Button
                   onClick={releaseFunds}
                   isLoading={isReleaseButtonLoading}
                   disabled={
-                    isReleaseButtonLoading //|| releaseBalance == 0
+                    isReleaseButtonLoading //|| releaseBalance == 0 //doesnt work in the graph
                   }
                 >
                   Release Funds {": " + releaseBalance}
