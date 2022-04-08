@@ -85,8 +85,6 @@ export default function ticket() {
       }
     }
   }
-  console.log(releaseBalance);
-  console.log(data);
 
   function releaseFunds() {
     setReleaseButtonLoading(true);
