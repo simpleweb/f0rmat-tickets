@@ -52,7 +52,8 @@ export default function Header() {
             <a href={"/user"}>My Tickets </a>
           </div>
         </div>
-        <div className="flex items-center">
+
+        <div className="flex-wrap items-center md:flex lg:flex">
           {wallet?.accounts[0].address ? (
             <>
               <a
