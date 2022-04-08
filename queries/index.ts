@@ -1,4 +1,5 @@
 import useGetTicket from "./useGetTicket";
 import useGetTickets from "./useGetTickets";
+import useGetUsersTickets from "./useGetUsersTickets";
 
-export { useGetTicket, useGetTickets };
+export { useGetTicket, useGetTickets, useGetUsersTickets };

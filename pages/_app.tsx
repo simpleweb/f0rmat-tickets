@@ -53,11 +53,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [onboard, connect]);
 
   return (
-    <div className="min-w-screen h-full min-h-screen w-full bg-black font-sans text-slate-100/[0.6]">
+    <div className="min-w-screen h-full min-h-screen w-full border-slate-100/[0.6] bg-black font-sans text-slate-100/[0.6]">
       <QueryClientProvider client={queryClient}>
         <div className="p-3 lg:pr-20 lg:pl-20">
           <Header disconnect={disconnect} connect={connect} />
-          <Component wallet={wallet} {...pageProps} />
+          <Component {...pageProps} />
           <Toaster />
         </div>
       </QueryClientProvider>

@@ -3,15 +3,9 @@ import type { NextPage } from "next";
 import { TicketCard } from "../components";
 import { useGetTickets } from "../queries";
 import { useState } from "react";
-import { useRouter } from "next/router";
 import { PlusIcon } from "@heroicons/react/outline";
 
-interface HomeProps {
-  wallet: WalletState;
-}
-
-const Home: NextPage = ({ wallet }: HomeProps) => {
-  const router = useRouter();
+const Home: NextPage = () => {
   const [refetchInterval, setRefetchInterval] = useState(0);
   const { data, error, isLoading } = useGetTickets(
     process.env.NEXT_PUBLIC_FACTORY_ID,

@@ -1,10 +1,9 @@
 import { gql, request } from "graphql-request";
 import { useQuery } from "react-query";
 
-const endpoint =
-  "https://api.thegraph.com/subgraphs/name/tinypell3ts/music-factory";
+const endpoint = process.env.NEXT_PUBLIC_GRAPH_ENDPOINT;
 
-export default function useRelease(uuid: string, refetchInterval = 0) {
+export default function useGetTickets(uuid: string, refetchInterval = 0) {
   return useQuery(
     ["factory", uuid],
     async () => {
