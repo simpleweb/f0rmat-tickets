@@ -19,7 +19,8 @@ export default function ticket() {
   const { query, push } = useRouter();
   const [{ wallet }] = useConnectWallet();
   const ticketContract = query.id;
-  const [isButtonLoading, setButtonLoading] = useState(false);
+  const [isPurchaseButtonLoading, setPurchaseButtonLoading] = useState(false);
+  const [isReleaseButtonLoading, setReleaseButtonLoading] = useState(false);
   const [refetchInterval, setRefetchInterval] = useState(0);
   const { data, error, isLoading } = useGetTicket(
     ticketContract?.toLowerCase(),
@@ -40,7 +41,7 @@ export default function ticket() {
     if (wallet?.accounts[0].balance) {
       checkFunds();
     }
-  }, [wallet, data, wallet?.accounts[0].balance]);
+  }, [wallet, data, wallet?.accounts[0]]);
 
   useEffect(() => {
     if (data) {
@@ -49,7 +50,7 @@ export default function ticket() {
       const sold = saleData.totalSold;
       if (sold == supply) setSoldOut(true);
     }
-  }, [data, wallet?.accounts[0].balance?.MATIC, isButtonLoading]);
+  }, [data, wallet?.accounts[0].balance?.MATIC, isPurchaseButtonLoading]);
 
   async function checkFunds() {
     try {
@@ -64,6 +65,9 @@ export default function ticket() {
 
           const balance = await wallet?.accounts[0].balance.MATIC;
           if (!balance || balance < price) setNoFunds(true);
+          else {
+            setNoFunds(false);
+          }
         },
       });
     } catch (e) {
@@ -72,15 +76,21 @@ export default function ticket() {
   }
 
   let isStakeholder;
+  let releaseBalance;
   if (data) {
     for (const item of data?.stakeholders) {
       if (item.id.startsWith(wallet?.accounts[0].address)) {
         isStakeholder = true;
+        releaseBalance = item.balance;
       }
     }
   }
+  console.log(releaseBalance);
+  console.log(data);
 
   function releaseFunds() {
+    setReleaseButtonLoading(true);
+    const waitingToConfirm = loadingNotification("Waiting for confirmation");
     try {
       callContract({
         name: "factory",
@@ -91,6 +101,7 @@ export default function ticket() {
             const release = await factory["release(address)"](
               wallet?.accounts[0].address
             );
+            dismissNotification(waitingToConfirm);
             toast
               .promise(
                 release.wait(),
@@ -108,19 +119,24 @@ export default function ticket() {
                 }
               )
               .then(() => {
-                setButtonLoading(false);
+                setReleaseButtonLoading(false);
               })
               .catch((e) => {
-                setButtonLoading(false);
-                errorNotification(e);
+                setReleaseButtonLoading(false);
+                errorNotification("Release failed");
               });
           } catch (e) {
+            errorNotification("Release failed");
+            dismissNotification(waitingToConfirm);
+            setReleaseButtonLoading(false);
             console.log(e);
           }
         },
       });
     } catch (e) {
-      console.log(e);
+      errorNotification("Release failed");
+      dismissNotification(waitingToConfirm);
+      setReleaseButtonLoading(false);
     }
   }
 
@@ -128,7 +144,7 @@ export default function ticket() {
   if (error) return <div>There was an error: {error?.message}</div>;
 
   function purchaseTicket() {
-    setButtonLoading(true);
+    setPurchaseButtonLoading(true);
     const waitingToConfirm = loadingNotification("Waiting for confirmation");
     try {
       callContract({
@@ -162,15 +178,15 @@ export default function ticket() {
                 }
               )
               .then(() => {
-                setButtonLoading(false);
+                setPurchaseButtonLoading(false);
                 push("/user");
               })
               .catch((e) => {
-                setButtonLoading(false);
+                setPurchaseButtonLoading(false);
                 errorNotification(e);
               });
           } catch (e) {
-            setButtonLoading(false);
+            setPurchaseButtonLoading(false);
             errorNotification(e);
             dismissNotification(waitingToConfirm);
             console.log(e);
@@ -178,9 +194,9 @@ export default function ticket() {
         },
       });
     } catch (e) {
-      errorNotification(e);
+      errorNotification(e.toString());
       dismissNotification(waitingToConfirm);
-      setButtonLoading(false);
+      setPurchaseButtonLoading(false);
     }
   }
 
@@ -251,8 +267,8 @@ export default function ticket() {
             ) : (
               <Button
                 onClick={purchaseTicket}
-                isLoading={isButtonLoading}
-                disabled={noFunds || isButtonLoading}
+                isLoading={isPurchaseButtonLoading}
+                disabled={noFunds || isPurchaseButtonLoading}
               >
                 Purchase Ticket at{" "}
                 {ethers.utils.formatEther(data?.saleData.salePrice) + " "}
@@ -261,7 +277,15 @@ export default function ticket() {
             )}
             <div className="ml-2">
               {isStakeholder && (
-                <Button onClick={releaseFunds}>Release Funds</Button>
+                <Button
+                  onClick={releaseFunds}
+                  isLoading={isReleaseButtonLoading}
+                  disabled={
+                    isReleaseButtonLoading //|| releaseBalance == 0
+                  }
+                >
+                  Release Funds {": " + releaseBalance}
+                </Button>
               )}
             </div>
           </div>
