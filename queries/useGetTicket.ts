@@ -19,7 +19,6 @@ export default function useGetTicket(address: string, refetchInterval = 0) {
                 stakeholders {
                     id
                     share
-                    balance
                 }
                 payouts {
                     id

@@ -76,12 +76,10 @@ export default function ticket() {
   }
 
   let isStakeholder;
-  let releaseBalance;
   if (data) {
     for (const item of data?.stakeholders) {
       if (item.id.startsWith(wallet?.accounts[0].address)) {
         isStakeholder = true;
-        releaseBalance = item.balance;
       }
     }
   }
@@ -280,11 +278,9 @@ export default function ticket() {
                 <Button
                   onClick={releaseFunds}
                   isLoading={isReleaseButtonLoading}
-                  disabled={
-                    isReleaseButtonLoading //|| releaseBalance == 0 //doesnt work in the graph
-                  }
+                  disabled={isReleaseButtonLoading}
                 >
-                  Release Funds {": " + releaseBalance}
+                  Release Funds
                 </Button>
               )}
             </div>
