@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { Router, useRouter } from "next/router";
 import { Button } from "../../components";
 import { callContract } from "../../helpers";
 import { useConnectWallet } from "@web3-onboard/react";
@@ -16,10 +16,11 @@ import { ethers } from "ethers";
 import { useEffect } from "react";
 
 export default function ticket() {
-  const { query } = useRouter();
+  const { query, push } = useRouter();
   const [{ wallet }] = useConnectWallet();
   const ticketContract = query.id;
-  const [isButtonLoading, setButtonLoading] = useState(false);
+  const [isPurchaseButtonLoading, setPurchaseButtonLoading] = useState(false);
+  const [isReleaseButtonLoading, setReleaseButtonLoading] = useState(false);
   const [refetchInterval, setRefetchInterval] = useState(0);
   const { data, error, isLoading } = useGetTicket(
     ticketContract?.toLowerCase(),
@@ -40,17 +41,16 @@ export default function ticket() {
     if (wallet?.accounts[0].balance) {
       checkFunds();
     }
-  }, [wallet, data, wallet?.accounts[0].balance]);
+  }, [wallet, data, wallet?.accounts[0]]);
 
   useEffect(() => {
     if (data) {
       const saleData = data.saleData;
-      console.log(saleData);
       const supply = saleData.maxSupply;
       const sold = saleData.totalSold;
       if (sold == supply) setSoldOut(true);
     }
-  }, [data, wallet?.accounts[0].balance?.MATIC, isButtonLoading]);
+  }, [data, wallet?.accounts[0].balance?.MATIC, isPurchaseButtonLoading]);
 
   async function checkFunds() {
     try {
@@ -65,6 +65,9 @@ export default function ticket() {
 
           const balance = await wallet?.accounts[0].balance.MATIC;
           if (!balance || balance < price) setNoFunds(true);
+          else {
+            setNoFunds(false);
+          }
         },
       });
     } catch (e) {
@@ -72,11 +75,72 @@ export default function ticket() {
     }
   }
 
+  let isStakeholder;
+  if (data) {
+    for (const item of data?.stakeholders) {
+      if (item.id.startsWith(wallet?.accounts[0].address)) {
+        isStakeholder = true;
+      }
+    }
+  }
+
+  function releaseFunds() {
+    setReleaseButtonLoading(true);
+    const waitingToConfirm = loadingNotification("Waiting for confirmation");
+    try {
+      callContract({
+        name: "factory",
+        provider: wallet?.provider,
+        address: ticketContract,
+        cb: async (factory) => {
+          try {
+            const release = await factory["release(address)"](
+              wallet?.accounts[0].address
+            );
+            dismissNotification(waitingToConfirm);
+            toast
+              .promise(
+                release.wait(),
+                {
+                  loading: "Releasing Fund...",
+                  success: "success",
+                  error: "failed",
+                },
+                {
+                  position: "bottom-center",
+                  style: {
+                    background: "#94a4bb",
+                    padding: "16px",
+                  },
+                }
+              )
+              .then(() => {
+                setReleaseButtonLoading(false);
+              })
+              .catch((e) => {
+                setReleaseButtonLoading(false);
+                errorNotification("Release failed");
+              });
+          } catch (e) {
+            errorNotification("Release failed");
+            dismissNotification(waitingToConfirm);
+            setReleaseButtonLoading(false);
+            console.log(e);
+          }
+        },
+      });
+    } catch (e) {
+      errorNotification("Release failed");
+      dismissNotification(waitingToConfirm);
+      setReleaseButtonLoading(false);
+    }
+  }
+
   if (isLoading) return <div>Loading ticket....</div>;
   if (error) return <div>There was an error: {error?.message}</div>;
 
   function purchaseTicket() {
-    setButtonLoading(true);
+    setPurchaseButtonLoading(true);
     const waitingToConfirm = loadingNotification("Waiting for confirmation");
     try {
       callContract({
@@ -109,15 +173,16 @@ export default function ticket() {
                   },
                 }
               )
-              .then((data) => {
-                setButtonLoading(false);
+              .then(() => {
+                setPurchaseButtonLoading(false);
+                push("/user");
               })
               .catch((e) => {
-                setButtonLoading(false);
+                setPurchaseButtonLoading(false);
                 errorNotification(e);
               });
           } catch (e) {
-            setButtonLoading(false);
+            setPurchaseButtonLoading(false);
             errorNotification(e);
             dismissNotification(waitingToConfirm);
             console.log(e);
@@ -125,11 +190,10 @@ export default function ticket() {
         },
       });
     } catch (e) {
-      errorNotification(e);
+      errorNotification(e.toString());
       dismissNotification(waitingToConfirm);
-      setButtonLoading(false);
+      setPurchaseButtonLoading(false);
     }
-    //route to myTickets page
   }
 
   function EventDataCard() {
@@ -165,8 +229,18 @@ export default function ticket() {
               <p>-{end}</p>
             </div>
             <div>
-              {categories && <div>Catagories: {categories}</div>}
-              {genres && <div className="">Genres: {genres}</div>}
+              {categories && (
+                <div className="flex">
+                  Catagories{" - "}
+                  <div className="pl-1 text-white">{categories}</div>
+                </div>
+              )}
+              {genres && (
+                <div className="flex">
+                  Genres{" - "}
+                  <div className="pl-1 text-white">{genres}</div>
+                </div>
+              )}
             </div>
             <br></br>
             <h2 className="text-3xl">About</h2>
@@ -178,24 +252,39 @@ export default function ticket() {
   }
 
   return (
-    <div className="m-10 gap-2 lg:grid-cols-2">
+    <div className="gap-2 lg:grid-cols-2">
       {data && (
         <div>
           <EventDataCard />
           <br></br>
-          {soldOut ? (
-            <h1 className="text-4xl">SOLD OUT</h1>
-          ) : (
-            <Button
-              onClick={purchaseTicket}
-              isLoading={isButtonLoading}
-              disabled={noFunds || isButtonLoading}
-            >
-              Purchase Ticket at{" "}
-              {ethers.utils.formatEther(data?.saleData.salePrice) + " "}
-              MATIC
-            </Button>
-          )}
+          <div className="flex-wrap md:flex lg:flex">
+            <div className="mb-2">
+              {soldOut ? (
+                <h1 className="mb-2 text-4xl">SOLD OUT</h1>
+              ) : (
+                <Button
+                  onClick={purchaseTicket}
+                  isLoading={isPurchaseButtonLoading}
+                  disabled={noFunds || isPurchaseButtonLoading}
+                >
+                  Purchase Ticket at{" "}
+                  {ethers.utils.formatEther(data?.saleData.salePrice) + " "}
+                  MATIC
+                </Button>
+              )}
+            </div>
+            <div className="md:ml-2 lg:ml-2">
+              {isStakeholder && (
+                <Button
+                  onClick={releaseFunds}
+                  isLoading={isReleaseButtonLoading}
+                  disabled={isReleaseButtonLoading}
+                >
+                  Release Funds
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       )}
       <br></br>
