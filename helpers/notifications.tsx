@@ -15,7 +15,7 @@ export function loadingNotification(message: string) {
     position: "bottom-center",
     className: "font-semibold",
     style: {
-      background: "#94a4bb",
+      background: "#858487",
       padding: "16px",
     },
   });
