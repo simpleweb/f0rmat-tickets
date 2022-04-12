@@ -10,7 +10,7 @@ export default function useGetTickets(uuid: string, refetchInterval = 0) {
       const { mediaItems } = await request(
         endpoint,
         gql`
-			query {
+			    query {
                 mediaItems(where: {factory_id: "${uuid}"}) {
                     id
                     symbol

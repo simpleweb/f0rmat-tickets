@@ -133,11 +133,11 @@ export default function CreateTickets() {
       setter(files[0]);
     }
   }
-
+  
   return (
     <div>
       {wallet?.provider && (
-        <div className="flex grid gap-2 lg:grid-cols-3">
+        <div className="flex grid w-full gap-2 lg:grid-cols-3">
           <div className="lg:col-span-1 lg:col-start-3">
             <div>
               <div className="flex flex-col items-center justify-center">
