@@ -281,7 +281,7 @@ export default function CreateTicketsForm({
 
                 <br></br>
 
-                <div>
+                <div className="pt-2 md:pt-5">
                   {genreFields.map((item, index) => {
                     return (
                       <div className="grid grid-cols-6 items-center">
