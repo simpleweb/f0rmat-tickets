@@ -244,7 +244,7 @@ export default function CreateTicketsForm({
                   </div>
                 </div>
               </Field>
-              <div className="mt-2 grid-cols-2 border-t-2 border-slate-300 pt-3 md:col-span-2 md:grid">
+              <div className="mt-2 grid-cols-2 border-t-2 border-slate-400 pt-3 md:col-span-2 md:grid">
                 <p className="pb-2 text-2xl">Tag the event</p>
                 <div className="md:col-start-1">
                   {categoryFields.map((item, index) => {
@@ -319,7 +319,7 @@ export default function CreateTicketsForm({
               <br></br>
 
               <div className="md:col-span-2">
-                <p className="border-t-2 border-slate-300 pb-2 pt-3 text-2xl">
+                <p className="border-t-2 border-slate-400 pb-2 pt-3 text-2xl">
                   Split ticket revenue.
                 </p>
                 {stakeholderFields.map((item, index) => {
