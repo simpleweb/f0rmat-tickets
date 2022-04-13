@@ -28,7 +28,7 @@ export default function Ticket() {
   );
   const [noFunds, setNoFunds] = useState(false);
   const [soldOut, setSoldOut] = useState(false);
-
+  const walletAddress = wallet?.accounts[0].address;
   useEffect(() => {
     if (ticketContract && !data) {
       setRefetchInterval(1000);
@@ -52,6 +52,10 @@ export default function Ticket() {
     }
   }, [data, wallet?.accounts[0].balance?.MATIC, isPurchaseButtonLoading]);
 
+  function formatToEther(weiValue) {
+    return ethers.utils.formatEther(weiValue);
+  }
+
   async function checkFunds() {
     try {
       callContract({
@@ -59,9 +63,7 @@ export default function Ticket() {
         provider: wallet?.provider,
         address: ticketContract,
         cb: async (factory) => {
-          const price = ethers.utils.formatEther(
-            await factory.releaseSalePrice()
-          );
+          const price = formatToEther(await factory.releaseSalePrice());
 
           const balance = await wallet?.accounts[0].balance.MATIC;
           if (!balance || balance < price) setNoFunds(true);
@@ -78,8 +80,16 @@ export default function Ticket() {
   let isStakeholder;
   if (data) {
     for (const item of data?.stakeholders) {
-      if (item.id.startsWith(wallet?.accounts[0].address)) {
+      if (item.id.startsWith(walletAddress)) {
         isStakeholder = true;
+      }
+    }
+  }
+  let isOwner;
+  if (data) {
+    for (const item of data?.owners) {
+      if (item.id.startsWith(walletAddress)) {
+        isOwner = true;
       }
     }
   }
@@ -94,15 +104,13 @@ export default function Ticket() {
         address: ticketContract,
         cb: async (factory) => {
           try {
-            const release = await factory["release(address)"](
-              wallet?.accounts[0].address
-            );
+            const release = await factory["release(address)"](walletAddress);
             dismissNotification(waitingToConfirm);
             toast
               .promise(
                 release.wait(),
                 {
-                  loading: "Releasing Fund...",
+                  loading: "Releasing Earnings...",
                   success: "success",
                   error: "failed",
                 },
@@ -152,8 +160,8 @@ export default function Ticket() {
             const price = await factory.releaseSalePrice();
 
             const ticket = await factory.mintRelease(
-              wallet?.accounts[0].address,
-              wallet?.accounts[0].address,
+              walletAddress,
+              walletAddress,
               { value: price.toString() }
             );
             dismissNotification(waitingToConfirm);
@@ -251,41 +259,65 @@ export default function Ticket() {
       </div>
     );
   }
-
+  const saleData = data.saleData;
   return (
     <div className="gap-2 lg:grid-cols-2">
       {data && (
         <div>
           <EventDataCard />
           <br></br>
-          <div className="flex-wrap md:flex lg:flex">
-            <div className="mb-2">
-              {soldOut ? (
-                <h1 className="mb-2 text-4xl">SOLD OUT</h1>
-              ) : (
-                <Button
-                  onClick={purchaseTicket}
-                  isLoading={isPurchaseButtonLoading}
-                  disabled={noFunds || isPurchaseButtonLoading}
-                >
-                  Purchase Ticket at{" "}
-                  {ethers.utils.formatEther(data?.saleData.salePrice) + " "}
-                  MATIC
-                </Button>
-              )}
+          {wallet?.accounts ? (
+            <div className="mt-3 flex-wrap md:flex lg:flex">
+              <div className="mb-2">
+                {isStakeholder || data?.creator.id == walletAddress ? (
+                  <div className="border-t-2 border-slate-100/[0.6]">
+                    <div className="mt-1">
+                      TOTAL SOLD: {saleData.totalSold} / {saleData.maxSupply} @
+                      {"  "}
+                      {formatToEther(saleData.salePrice)}MATIC EACH
+                    </div>
+                    <div>
+                      TOTAL EARNINGS: {formatToEther(saleData.totalEarnings)}{" "}
+                      MATIC
+                    </div>
+                    <div>
+                      TOTAL RELEASED: {formatToEther(saleData.totalEarnings)}{" "}
+                      MATIC
+                    </div>
+                  </div>
+                ) : soldOut ? (
+                  <h1 className="mb-2 text-4xl">SOLD OUT</h1>
+                ) : (
+                  <Button
+                    onClick={purchaseTicket}
+                    isLoading={isPurchaseButtonLoading}
+                    disabled={noFunds || isPurchaseButtonLoading}
+                  >
+                    Purchase Ticket at{" "}
+                    {ethers.utils.formatEther(data?.saleData.salePrice) + " "}
+                    MATIC
+                  </Button>
+                )}
+              </div>
+              <div className="md:ml-2 lg:ml-2">
+                {isStakeholder ? (
+                  <Button
+                    onClick={releaseFunds}
+                    isLoading={isReleaseButtonLoading}
+                    disabled={isReleaseButtonLoading}
+                  >
+                    Release My Earnings
+                  </Button>
+                ) : (
+                  isOwner && (
+                    <div className="pt-2">YOU OWN A TICKET TO THIS EVENT</div>
+                  )
+                )}
+              </div>
             </div>
-            <div className="md:ml-2 lg:ml-2">
-              {isStakeholder && (
-                <Button
-                  onClick={releaseFunds}
-                  isLoading={isReleaseButtonLoading}
-                  disabled={isReleaseButtonLoading}
-                >
-                  Release Funds
-                </Button>
-              )}
-            </div>
-          </div>
+          ) : (
+            <div>CONNECT YOUR WALLET TO PURCHASE A TICKET</div>
+          )}
         </div>
       )}
       <br></br>
