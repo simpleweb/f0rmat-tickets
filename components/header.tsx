@@ -1,9 +1,4 @@
 import { ExternalLinkIcon } from "@heroicons/react/outline";
-import {
-  ConnectOptions,
-  DisconnectOptions,
-  WalletState,
-} from "@web3-onboard/core";
 import { useSetChain, useConnectWallet } from "@web3-onboard/react";
 import useTranslation from "next-translate/useTranslation";
 import { useEffect } from "react";
@@ -48,8 +43,13 @@ export default function Header() {
               </div>
             </div>
           )}
+
           <div className=" hover:text-white">
-            <a href={"/user"}>My Tickets </a>
+            <a href={"/user/owner"}>My Tickets </a>
+          </div>
+
+          <div className=" hover:text-white">
+            <a href={"/user"}>My Events </a>
           </div>
         </div>
 

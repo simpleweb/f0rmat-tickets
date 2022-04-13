@@ -11,7 +11,7 @@ export default function useGetTickets(uuid: string, refetchInterval = 0) {
         endpoint,
         gql`
 			    query {
-                mediaItems(where: {factory_id: "${uuid}"}) {
+                mediaItems(where: {factory_id: "${uuid}"}, orderBy: createdAt, orderDirection: desc) {
                     id
                     symbol
                     saleData {

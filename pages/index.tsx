@@ -22,7 +22,7 @@ const Home: NextPage = () => {
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {data?.map((ticket: Ticket) => (
-          <TicketCard data={ticket} />
+          <TicketCard metadata={ticket.metadata} id={ticket.id} />
         ))}
       </div>
     </div>
