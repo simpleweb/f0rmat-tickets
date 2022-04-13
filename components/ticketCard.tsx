@@ -14,7 +14,7 @@ export function TicketCard({ metadata, id }: TicketCardProps) {
   const factory = getMetadataValue(metadata, "factory_id");
   const url = "/ticket/" + id;
 
-  if (factory != process.env.NEXT_PUBLIC_FACTORY_ID) return ""; //couldnt work out how to do this in the subgraph
+  if (factory != process.env.NEXT_PUBLIC_FACTORY_ID) return <div></div>; //couldnt work out how to do this in the subgraph
   return (
     <a href={url}>
       <div className="border-2 border-black p-2 hover:border-y-white">

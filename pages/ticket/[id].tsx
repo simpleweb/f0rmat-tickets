@@ -15,7 +15,7 @@ import {
 import { ethers } from "ethers";
 import { useEffect } from "react";
 
-export default function ticket() {
+export default function Ticket() {
   const { query, push } = useRouter();
   const [{ wallet }] = useConnectWallet();
   const ticketContract = query.id;
@@ -217,6 +217,7 @@ export default function ticket() {
           className="w-1/2 rounded-lg lg:col-span-1 lg:col-start-2"
           loading="lazy"
           src={transformURL(image)}
+          alt="Event Flyer"
         />
         <div className="sm:order-2 lg:col-span-1 lg:col-start-1 lg:row-start-1">
           <div className="flex-wrap">

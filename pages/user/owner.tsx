@@ -6,7 +6,7 @@ import { PlusIcon } from "@heroicons/react/outline";
 import { useConnectWallet } from "@web3-onboard/react";
 import { useEffect } from "react";
 
-export default function ownedTickets() {
+export default function OwnedTickets() {
   const [{ wallet }] = useConnectWallet();
   const [refetchInterval, setRefetchInterval] = useState(0);
   const { data, error, isLoading } = useGetOwner(
@@ -25,10 +25,11 @@ export default function ownedTickets() {
             Filter Tickets <PlusIcon className="h-6 w-5" />
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {data?.owner.mediaItems.map((ticket: Ticket) => (
+            {data?.owner.mediaItems.map((ticket: Ticket, i) => (
               <TicketCard
                 metadata={ticket.mediaItem.metadata}
                 id={ticket.mediaItem.id}
+                key={i}
               />
             ))}
           </div>

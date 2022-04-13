@@ -21,8 +21,8 @@ const Home: NextPage = () => {
         Filter Tickets <PlusIcon className="h-6 w-5" />
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {data?.map((ticket: Ticket) => (
-          <TicketCard metadata={ticket.metadata} id={ticket.id} />
+        {data?.map((ticket: Ticket, i) => (
+          <TicketCard metadata={ticket.metadata} id={ticket.id} key={i} />
         ))}
       </div>
     </div>
