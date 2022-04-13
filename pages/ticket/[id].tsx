@@ -28,7 +28,7 @@ export default function Ticket() {
   );
   const [noFunds, setNoFunds] = useState(false);
   const [soldOut, setSoldOut] = useState(false);
-
+  const walletAddress = wallet?.accounts[0].address;
   useEffect(() => {
     if (ticketContract && !data) {
       setRefetchInterval(1000);
@@ -80,7 +80,7 @@ export default function Ticket() {
   let isStakeholder;
   if (data) {
     for (const item of data?.stakeholders) {
-      if (item.id.startsWith(wallet?.accounts[0].address)) {
+      if (item.id.startsWith(walletAddress)) {
         isStakeholder = true;
       }
     }
@@ -88,7 +88,7 @@ export default function Ticket() {
   let isOwner;
   if (data) {
     for (const item of data?.owners) {
-      if (item.id.startsWith(wallet?.accounts[0].address)) {
+      if (item.id.startsWith(walletAddress)) {
         isOwner = true;
       }
     }
@@ -104,9 +104,7 @@ export default function Ticket() {
         address: ticketContract,
         cb: async (factory) => {
           try {
-            const release = await factory["release(address)"](
-              wallet?.accounts[0].address
-            );
+            const release = await factory["release(address)"](walletAddress);
             dismissNotification(waitingToConfirm);
             toast
               .promise(
@@ -162,8 +160,8 @@ export default function Ticket() {
             const price = await factory.releaseSalePrice();
 
             const ticket = await factory.mintRelease(
-              wallet?.accounts[0].address,
-              wallet?.accounts[0].address,
+              walletAddress,
+              walletAddress,
               { value: price.toString() }
             );
             dismissNotification(waitingToConfirm);
@@ -270,7 +268,7 @@ export default function Ticket() {
           <br></br>
           <div className="mt-3 flex-wrap md:flex lg:flex">
             <div className="mb-2">
-              {isStakeholder ? (
+              {isStakeholder || data?.creator.id == walletAddress ? (
                 <div className="border-t-2 border-slate-100/[0.6]">
                   <div className="mt-1">
                     TOTAL SOLD: {saleData.totalSold} / {saleData.maxSupply} @
