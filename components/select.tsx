@@ -19,11 +19,11 @@ export function Select({
   ...rest
 }: SelectProps) {
   return (
-    <div className="w-full">
+    <div>
       {label}
       <div className="flex text-black">
         <select
-          className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          className="w-full border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           name={name}
           id={name}
           placeholder={placeholder}

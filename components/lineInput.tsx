@@ -28,7 +28,7 @@ export function LineInput({
         <input
           className={classNames(
             { "border-2 border-red-500": error },
-            "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            "block w-full border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           )}
           placeholder={placeholder}
           type={type}

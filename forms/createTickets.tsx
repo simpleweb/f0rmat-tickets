@@ -121,121 +121,136 @@ export default function CreateTicketsForm({
   }, [wallet?.accounts[0].address]);
 
   return (
-    <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onCreateTickets)}>
-        <div className="border-t-2 border-b-2 border-slate-400 p-3">
-          <div className="flex-wrap gap-2 lg:grid lg:grid-cols-2">
-            <Field
-              helpText="Add a title for the event."
-              error={errors.title?.message}
-            >
-              <Input
-                name="title"
-                label="Event Title"
-                placeholder="Painting with Bob Ross"
-              />
-            </Field>
-            <Field
-              helpText="Add a venue name for the event."
-              error={errors.venue?.message}
-            >
-              <Input name="venue" label="Venue Name" placeholder="Bobs gaff" />
-            </Field>
-            <Field
-              helpText="Add a 4 character identifier for the event."
-              error={errors.blockChainId?.message}
-            >
-              <Input
-                name="blockChainId"
-                label="Blockchain Identifier"
-                placeholder="EVNT"
-                maxLength={4}
-              />
-            </Field>
-            <Field
-              helpText="Add a description for the event."
-              error={errors.description?.message}
-            >
-              <TextArea
-                name="description"
-                label="Event Description"
-                placeholder="A follow along painting session with Bob Ross..."
-              />
-            </Field>
-            <Field
-              helpText="Add the venues address."
-              error={errors.address?.message}
-            >
-              <TextArea
-                name="address"
-                label="Venue Address"
-                placeholder="1 Bob street"
-              />
-            </Field>
-            <div className="flex gap-2">
-              <div className="w-1/2">
+    <div>
+      <FormProvider {...form}>
+        <form onSubmit={form.handleSubmit(onCreateTickets)}>
+          <div className="border-t-2 border-b-2 border-slate-400 p-3">
+            <p className="pb-3 text-2xl">Event Information</p>
+            <div className="flex-wrap gap-2 lg:grid lg:grid-cols-2">
+              <div className="grid grid-cols-4 gap-2">
+                <div className="col-span-3">
+                  <Field
+                    helpText="Add a title for the event."
+                    error={errors.title?.message}
+                  >
+                    <Input
+                      name="title"
+                      label="Event Title"
+                      placeholder="Painting with Bob Ross"
+                    />
+                  </Field>
+                </div>
                 <Field
-                  helpText="Add the price of a ticket."
-                  error={errors.price?.message}
+                  helpText="Add a 4 character identifier for the event."
+                  error={errors.blockChainId?.message}
+                  className="col-span-1"
                 >
                   <Input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    name="price"
-                    label="Ticket Price"
-                    placeholder="0.75"
+                    name="blockChainId"
+                    label="Identifier"
+                    placeholder="EVNT"
+                    maxLength={4}
                   />
                 </Field>
               </div>
-              <div className="w-1/2">
-                <Field
-                  helpText="Add the number of tickets for sale."
-                  error={errors.quantity?.message}
-                >
-                  <Input
-                    type="number"
-                    min="1"
-                    name="quantity"
-                    label="Tickets for sale"
-                    placeholder="250"
-                  />
-                </Field>
-              </div>
-            </div>
-            <Field
-              helpText="Add the date and time of the event."
-              error={
-                errors.eventDate?.message ||
-                errors.eventStartTime?.message ||
-                errors.eventEndTime?.message
-              }
-            >
+              <Field
+                helpText="Add a venue name for the event."
+                error={errors.venue?.message}
+              >
+                <Input
+                  name="venue"
+                  label="Venue Name"
+                  placeholder="Bobs gaff"
+                />
+              </Field>
+              <Field
+                helpText="Add a description for the event."
+                error={errors.description?.message}
+              >
+                <TextArea
+                  name="description"
+                  label="Event Description"
+                  placeholder="A follow along painting session with Bob Ross..."
+                />
+              </Field>
+              <Field
+                helpText="Add the venues address."
+                error={errors.address?.message}
+              >
+                <TextArea
+                  name="address"
+                  label="Venue Address"
+                  placeholder="1 Bob street"
+                />
+              </Field>
               <div className="flex gap-2">
-                <div className="w-1/3">
-                  <Input
-                    type="date"
-                    name="eventDate"
-                    min={dayjs().format("YYYY-MM-DD")}
-                    label="Event Date"
-                    onKeyDown={(e) => e.preventDefault()}
-                  />
+                <div className="w-1/2">
+                  <Field
+                    helpText="Add the price of a ticket."
+                    error={errors.price?.message}
+                  >
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      name="price"
+                      label="Ticket Price"
+                      placeholder="0.75"
+                    />
+                  </Field>
                 </div>
-                <div className="w-1/3">
-                  <Input type="time" name="eventStartTime" label="Start time" />
-                </div>
-                <div className="w-1/3">
-                  <Input type="time" name="eventEndTime" label="End time" />
+                <div className="w-1/2">
+                  <Field
+                    helpText="Add the number of tickets for sale."
+                    error={errors.quantity?.message}
+                  >
+                    <Input
+                      type="number"
+                      min="1"
+                      name="quantity"
+                      label="Tickets for sale"
+                      placeholder="250"
+                    />
+                  </Field>
                 </div>
               </div>
-            </Field>
-            <div>
-              <div className="flex-wrap gap-3 md:flex lg:flex">
-                {categoryFields.length != 0 ? (
-                  <div className="grid grid-cols-2 gap-3">
-                    {categoryFields.map((item, index) => {
-                      return (
-                        <div className="col-span-2 flex gap-2">
+              <Field
+                helpText="Add the date and time of the event."
+                error={
+                  errors.eventDate?.message ||
+                  errors.eventStartTime?.message ||
+                  errors.eventEndTime?.message
+                }
+              >
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <Input
+                      type="date"
+                      name="eventDate"
+                      min={dayjs().format("YYYY-MM-DD")}
+                      label="Event Date"
+                      onKeyDown={(e) => e.preventDefault()}
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      type="time"
+                      name="eventStartTime"
+                      label="Start time"
+                    />
+                  </div>
+                  <div>
+                    <Input type="time" name="eventEndTime" label="End time" />
+                  </div>
+                </div>
+              </Field>
+              <div className="mt-2 grid-cols-2 border-t-2 border-slate-400 pt-3 md:col-span-2 md:grid">
+                <p className="pb-2 text-2xl">Tag the event</p>
+                <div className="md:col-start-1">
+                  {categoryFields.map((item, index) => {
+                    return (
+                      <div className="grid grid-cols-6 items-center">
+                        <div className="col-span-5">
                           <Field>
                             <Select
                               name={`categories.${index}`}
@@ -250,74 +265,67 @@ export default function CreateTicketsForm({
                               ))}
                             </Select>
                           </Field>
-                          <div className="grid grid-cols-2 gap-2">
-                            <div
-                              className="span-col-1 pt-8"
-                              onClick={() => removeCategory(index)}
-                            >
-                              <MinusCircleIcon className="h-6 w-6" />
-                            </div>
-                            <div
-                              className="col-start-2 pt-8"
-                              onClick={() => appendCategory("")}
-                            >
-                              <PlusCircleIcon className="h-6 w-6" />
-                            </div>
+                        </div>
+                        <div className="flex space-x-2 px-2 pt-5">
+                          <div onClick={() => removeCategory(index)}>
+                            <MinusCircleIcon className="h-6 w-6" />
+                          </div>
+                          <div onClick={() => appendCategory("")}>
+                            <PlusCircleIcon className="h-6 w-6" />
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <Button onClick={() => appendCategory(0)}>
-                    Add Categories
-                  </Button>
-                )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <br></br>
+
+                <div className="pt-2 md:pt-5">
+                  {genreFields.map((item, index) => {
+                    return (
+                      <div className="grid grid-cols-6 items-center">
+                        <div className="col-span-5">
+                          <Field>
+                            <Select
+                              name={`genres.${index}`}
+                              label="Genre"
+                              placeholder="Talk"
+                            >
+                              <option>Select Genre</option>
+                              {genres.map((genre) => (
+                                <option value={genre.value}>
+                                  {genre.label}
+                                </option>
+                              ))}
+                            </Select>
+                          </Field>
+                        </div>
+                        <div className="flex space-x-2 px-2 pt-5">
+                          <div onClick={() => removeGenre(index)}>
+                            <MinusCircleIcon className="h-6 w-6" />
+                          </div>
+                          <div onClick={() => appendGenre("")}>
+                            <PlusCircleIcon className="h-6 w-6" />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <br></br>
               </div>
               <br></br>
 
-              <div className="gap-3">
-                {genreFields.map((item, index) => {
-                  return (
-                    <div className="col-span-2 flex gap-2">
-                      <Field>
-                        <Select
-                          name={`genres.${index}`}
-                          label="Genre"
-                          placeholder="Talk"
-                        >
-                          <option>Select Genre</option>
-                          {genres.map((genre) => (
-                            <option value={genre.value}>{genre.label}</option>
-                          ))}
-                        </Select>
-                      </Field>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div
-                          className="span-col-1 pt-8"
-                          onClick={() => removeGenre(index)}
-                        >
-                          <MinusCircleIcon className="h-6 w-6" />
-                        </div>
-                        <div
-                          className="col-start-2 pt-8"
-                          onClick={() => appendGenre(index)}
-                        >
-                          <PlusCircleIcon className="h-6 w-6" />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <br></br>
-            </div>
-            <div>
-              <div>
+              <div className="md:col-span-2">
+                <p className="border-t-2 border-slate-400 pb-2 pt-3 text-2xl">
+                  Split ticket revenue.
+                </p>
                 {stakeholderFields.map((item, index) => {
                   return (
-                    <div key={index} className="flex gap-2">
-                      <div className="w-4/6">
+                    <div key={index} className="mb-2 grid grid-cols-6 gap-2">
+                      <div className="col-span-3 md:col-span-5">
                         <Field
                           error={
                             errors["stakeholders"]?.[index]?.address?.message
@@ -326,14 +334,14 @@ export default function CreateTicketsForm({
                         >
                           <Input
                             name={`stakeholders.${index}.address`}
-                            label="Add Stakeholders"
+                            label="Stakeholder wallet"
                             placeholder={wallet?.accounts[0].address}
                           />
                         </Field>
                       </div>
-                      <div className="w-2/6">
+                      <div>
                         <div className="flex gap-2">
-                          <div className="w-4/5">
+                          <div>
                             <Field
                               helpText="Add the stake percentage."
                               error={
@@ -350,9 +358,9 @@ export default function CreateTicketsForm({
                               />
                             </Field>
                           </div>
-                          <div className="flex w-1/5 gap-2 ">
+                          <div className="flex justify-center gap-2 ">
                             <div
-                              className="w-1/2 pt-8"
+                              className="pt-8"
                               onClick={() => {
                                 if (stakeholderFields.length > 1)
                                   removeStakeholder(index);
@@ -361,7 +369,7 @@ export default function CreateTicketsForm({
                               <MinusCircleIcon className="h-6 w-6" />
                             </div>
                             <div
-                              className="w-1/2 pt-8"
+                              className="pt-8"
                               onClick={() => appendStakeholder(index)}
                             >
                               <PlusCircleIcon className="h-6 w-6" />
@@ -375,18 +383,18 @@ export default function CreateTicketsForm({
               </div>
             </div>
           </div>
-        </div>
+          <br></br>
+          <Field className="border-b-2 border-slate-400">
+            <Button
+              isLoading={isLoading}
+              disabled={!requiredFilesAdded || isLoading}
+            >
+              Create Tickets
+            </Button>
+          </Field>
+        </form>
         <br></br>
-        <Field className="border-b-2 border-slate-400">
-          <Button
-            isLoading={isLoading}
-            disabled={!requiredFilesAdded || isLoading}
-          >
-            Create Tickets
-          </Button>
-        </Field>
-      </form>
-      <br></br>
-    </FormProvider>
+      </FormProvider>
+    </div>
   );
 }
