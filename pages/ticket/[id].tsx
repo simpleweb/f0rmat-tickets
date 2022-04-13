@@ -43,8 +43,6 @@ export default function Ticket() {
     }
   }, [wallet, data, wallet?.accounts[0]]);
 
-  console.log(data);
-
   useEffect(() => {
     if (data) {
       const saleData = data.saleData;
