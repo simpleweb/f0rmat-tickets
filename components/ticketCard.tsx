@@ -1,17 +1,20 @@
 import { getMetadataValue, transformURL } from "../helpers";
 
 interface TicketCardProps {
-  data: Ticket;
+  metadata: Ticket;
+  id: string;
 }
-export function TicketCard({ data }: TicketCardProps) {
-  const metadata = data.metadata;
+export function TicketCard({ metadata, id }: TicketCardProps) {
   const image = getMetadataValue(metadata, "image");
   const title = getMetadataValue(metadata, "name");
   const date = getMetadataValue(metadata, "date");
   const start = getMetadataValue(metadata, "start");
   const venue = getMetadataValue(metadata, "venue");
   const categories = getMetadataValue(metadata, "categories");
-  const url = "/ticket/" + data.id;
+  const factory = getMetadataValue(metadata, "factory_id");
+  const url = "/ticket/" + id;
+
+  if (factory != process.env.NEXT_PUBLIC_FACTORY_ID) return ""; //couldnt work out how to do this in the subgraph
   return (
     <a href={url}>
       <div className="border-2 border-black p-2 hover:border-y-white">

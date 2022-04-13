@@ -1,7 +1,7 @@
 import { toast } from "react-hot-toast";
 
 export function errorNotification(message: string) {
-  return toast.error(<b>{message}</b>, {
+  return toast.error(<b>{message.toString()}</b>, {
     position: "bottom-center",
     style: {
       background: "#de938d",
@@ -11,7 +11,7 @@ export function errorNotification(message: string) {
 }
 
 export function loadingNotification(message: string) {
-  return toast.loading(message, {
+  return toast.loading(message.toString(), {
     position: "bottom-center",
     className: "font-semibold",
     style: {

@@ -179,11 +179,11 @@ export default function ticket() {
               })
               .catch((e) => {
                 setPurchaseButtonLoading(false);
-                errorNotification(e);
+                errorNotification("Purchase Failed");
               });
           } catch (e) {
             setPurchaseButtonLoading(false);
-            errorNotification(e);
+            errorNotification("Purchase Failed");
             dismissNotification(waitingToConfirm);
             console.log(e);
           }

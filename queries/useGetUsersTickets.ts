@@ -13,7 +13,7 @@ export default function useGetUsersTickets(
       const { mediaItems } = await request(
         endpoint,
         gql`
-			query {
+			  query {
 					mediaItems(where: {creator: "${address}"}, orderBy: createdAt, orderDirection: desc) {
 						id				
 						symbol
