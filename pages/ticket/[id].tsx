@@ -266,54 +266,58 @@ export default function Ticket() {
         <div>
           <EventDataCard />
           <br></br>
-          <div className="mt-3 flex-wrap md:flex lg:flex">
-            <div className="mb-2">
-              {isStakeholder || data?.creator.id == walletAddress ? (
-                <div className="border-t-2 border-slate-100/[0.6]">
-                  <div className="mt-1">
-                    TOTAL SOLD: {saleData.totalSold} / {saleData.maxSupply} @
-                    {"  "}
-                    {formatToEther(saleData.salePrice)}MATIC EACH
+          {wallet?.accounts ? (
+            <div className="mt-3 flex-wrap md:flex lg:flex">
+              <div className="mb-2">
+                {isStakeholder || data?.creator.id == walletAddress ? (
+                  <div className="border-t-2 border-slate-100/[0.6]">
+                    <div className="mt-1">
+                      TOTAL SOLD: {saleData.totalSold} / {saleData.maxSupply} @
+                      {"  "}
+                      {formatToEther(saleData.salePrice)}MATIC EACH
+                    </div>
+                    <div>
+                      TOTAL EARNINGS: {formatToEther(saleData.totalEarnings)}{" "}
+                      MATIC
+                    </div>
+                    <div>
+                      TOTAL RELEASED: {formatToEther(saleData.totalEarnings)}{" "}
+                      MATIC
+                    </div>
                   </div>
-                  <div>
-                    TOTAL EARNINGS: {formatToEther(saleData.totalEarnings)}{" "}
+                ) : soldOut ? (
+                  <h1 className="mb-2 text-4xl">SOLD OUT</h1>
+                ) : (
+                  <Button
+                    onClick={purchaseTicket}
+                    isLoading={isPurchaseButtonLoading}
+                    disabled={noFunds || isPurchaseButtonLoading}
+                  >
+                    Purchase Ticket at{" "}
+                    {ethers.utils.formatEther(data?.saleData.salePrice) + " "}
                     MATIC
-                  </div>
-                  <div>
-                    TOTAL RELEASED: {formatToEther(saleData.totalEarnings)}{" "}
-                    MATIC
-                  </div>
-                </div>
-              ) : soldOut ? (
-                <h1 className="mb-2 text-4xl">SOLD OUT</h1>
-              ) : (
-                <Button
-                  onClick={purchaseTicket}
-                  isLoading={isPurchaseButtonLoading}
-                  disabled={noFunds || isPurchaseButtonLoading}
-                >
-                  Purchase Ticket at{" "}
-                  {ethers.utils.formatEther(data?.saleData.salePrice) + " "}
-                  MATIC
-                </Button>
-              )}
+                  </Button>
+                )}
+              </div>
+              <div className="md:ml-2 lg:ml-2">
+                {isStakeholder ? (
+                  <Button
+                    onClick={releaseFunds}
+                    isLoading={isReleaseButtonLoading}
+                    disabled={isReleaseButtonLoading}
+                  >
+                    Release My Earnings
+                  </Button>
+                ) : (
+                  isOwner && (
+                    <div className="pt-2">YOU OWN A TICKET TO THIS EVENT</div>
+                  )
+                )}
+              </div>
             </div>
-            <div className="md:ml-2 lg:ml-2">
-              {isStakeholder ? (
-                <Button
-                  onClick={releaseFunds}
-                  isLoading={isReleaseButtonLoading}
-                  disabled={isReleaseButtonLoading}
-                >
-                  Release My Earnings
-                </Button>
-              ) : (
-                isOwner && (
-                  <div className="pt-2">YOU OWN A TICKET TO THIS EVENT</div>
-                )
-              )}
-            </div>
-          </div>
+          ) : (
+            <div>CONNECT YOUR WALLET TO PURCHASE A TICKET</div>
+          )}
         </div>
       )}
       <br></br>
