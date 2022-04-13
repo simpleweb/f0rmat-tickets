@@ -43,6 +43,8 @@ export default function Ticket() {
     }
   }, [wallet, data, wallet?.accounts[0]]);
 
+  console.log(data);
+
   useEffect(() => {
     if (data) {
       const saleData = data.saleData;
@@ -52,6 +54,10 @@ export default function Ticket() {
     }
   }, [data, wallet?.accounts[0].balance?.MATIC, isPurchaseButtonLoading]);
 
+  function formatToEther(weiValue) {
+    return ethers.utils.formatEther(weiValue);
+  }
+
   async function checkFunds() {
     try {
       callContract({
@@ -59,9 +65,7 @@ export default function Ticket() {
         provider: wallet?.provider,
         address: ticketContract,
         cb: async (factory) => {
-          const price = ethers.utils.formatEther(
-            await factory.releaseSalePrice()
-          );
+          const price = formatToEther(await factory.releaseSalePrice());
 
           const balance = await wallet?.accounts[0].balance.MATIC;
           if (!balance || balance < price) setNoFunds(true);
@@ -80,6 +84,14 @@ export default function Ticket() {
     for (const item of data?.stakeholders) {
       if (item.id.startsWith(wallet?.accounts[0].address)) {
         isStakeholder = true;
+      }
+    }
+  }
+  let isOwner;
+  if (data) {
+    for (const item of data?.owners) {
+      if (item.id.startsWith(wallet?.accounts[0].address)) {
+        isOwner = true;
       }
     }
   }
@@ -102,7 +114,7 @@ export default function Ticket() {
               .promise(
                 release.wait(),
                 {
-                  loading: "Releasing Fund...",
+                  loading: "Releasing Earnings...",
                   success: "success",
                   error: "failed",
                 },
@@ -251,16 +263,32 @@ export default function Ticket() {
       </div>
     );
   }
-
+  const saleData = data.saleData;
   return (
     <div className="gap-2 lg:grid-cols-2">
       {data && (
         <div>
           <EventDataCard />
           <br></br>
-          <div className="flex-wrap md:flex lg:flex">
+          <div className="mt-3 flex-wrap md:flex lg:flex">
             <div className="mb-2">
-              {soldOut ? (
+              {isStakeholder ? (
+                <div className="border-t-2 border-slate-100/[0.6]">
+                  <div className="mt-1">
+                    TOTAL SOLD: {saleData.totalSold} / {saleData.maxSupply} @
+                    {"  "}
+                    {formatToEther(saleData.salePrice)}MATIC EACH
+                  </div>
+                  <div>
+                    TOTAL EARNINGS: {formatToEther(saleData.totalEarnings)}{" "}
+                    MATIC
+                  </div>
+                  <div>
+                    TOTAL RELEASED: {formatToEther(saleData.totalEarnings)}{" "}
+                    MATIC
+                  </div>
+                </div>
+              ) : soldOut ? (
                 <h1 className="mb-2 text-4xl">SOLD OUT</h1>
               ) : (
                 <Button
@@ -275,14 +303,18 @@ export default function Ticket() {
               )}
             </div>
             <div className="md:ml-2 lg:ml-2">
-              {isStakeholder && (
+              {isStakeholder ? (
                 <Button
                   onClick={releaseFunds}
                   isLoading={isReleaseButtonLoading}
                   disabled={isReleaseButtonLoading}
                 >
-                  Release Funds
+                  Release My Earnings
                 </Button>
+              ) : (
+                isOwner && (
+                  <div className="pt-2">YOU OWN A TICKET TO THIS EVENT</div>
+                )
               )}
             </div>
           </div>

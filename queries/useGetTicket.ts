@@ -15,6 +15,9 @@ export default function useGetTicket(address: string, refetchInterval = 0) {
             mediaItem(id: "${address}") {
                 id
                 symbol
+                owners {
+                  id
+                }
                 stakeholders {
                     id
                     share

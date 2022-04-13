@@ -192,7 +192,7 @@ export default function CreateTicketsForm({
                     <Input
                       type="number"
                       min="0"
-                      step="0.01"
+                      step="0.001"
                       name="price"
                       label="Ticket Price"
                       placeholder="0.75"
