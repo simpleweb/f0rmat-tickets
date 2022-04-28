@@ -46,7 +46,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     if (previouslyConnectedWallets?.length) {
       async function setWalletFromLocalStorage() {
-        await connect({ autoSelect: previouslyConnectedWallets[0] });
+        await connect({
+          autoSelect: {
+            label: previouslyConnectedWallets[0],
+            disableModals: true,
+          },
+        });
       }
       setWalletFromLocalStorage();
     }
