@@ -229,7 +229,7 @@ export default function Ticket() {
         />
         <div className="sm:order-2 lg:col-span-1 lg:col-start-1 lg:row-start-1">
           <div className="flex-wrap">
-            <h1 className="text-5xl">{title}</h1>
+            <h1 className="text-6xl">{title}</h1>
             <h1 className="text-3xl">{venue}</h1>
             <h1 className="text-2xl">{address}</h1>
             <div className="flex border-b-2 border-slate-100/[0.6] text-2xl">
@@ -261,8 +261,8 @@ export default function Ticket() {
   }
   const saleData = data.saleData;
   return (
-    <div className="gap-2 lg:grid-cols-2">
-      {data && (
+    <div className="gap-2 text-2xl lg:grid-cols-2">
+      {data ? (
         <div>
           <EventDataCard />
           <br></br>
@@ -319,6 +319,8 @@ export default function Ticket() {
             <div>CONNECT YOUR WALLET TO PURCHASE A TICKET</div>
           )}
         </div>
+      ) : (
+        <div>LOADING TICKET</div>
       )}
       <br></br>
     </div>
